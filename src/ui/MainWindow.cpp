@@ -8,6 +8,7 @@
 #include "GlobalConfig.h"
 #include "Log.h"
 #include <QFileDialog>
+#include <Contrller.h>
 
 MainWindow::MainWindow(QApplication *app, QWidget *parent)
     : QMainWindow(parent){
@@ -17,6 +18,7 @@ MainWindow::MainWindow(QApplication *app, QWidget *parent)
 	setupUI();
 	setupSize();
 	setupConnections();
+	_controller = std::make_shared<Controller>();
 }
 
 void MainWindow::setupSize() {
@@ -116,11 +118,12 @@ void MainWindow::openNewFile() {
 
 	LOGI("open file {}", filename.toStdString().c_str());
 	LOGI("select last directory is {}", _lastOpenDirectory.toStdString().c_str());
-	if (_fileset.find(filename) == _fileset.end()) {
-		_fileset.insert(filename);
+	if (!_controller->contain(filename.toStdString())) {
+		_controller->insert(filename.toStdString());
 		_fileCombox->addItem(filename);
-		_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
 	}
+
+	_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
 }
 
 MainWindow::~MainWindow(){

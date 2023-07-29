@@ -9,7 +9,9 @@
 #include <vector>
 #include <set>
 #include <QMouseEvent>
+#include <memory>
 
+class Controller;
 class MainWindow : public QMainWindow{
     Q_OBJECT
 
@@ -53,7 +55,7 @@ private:
 	QGroupBox *_fileInfoGroup;
 private:
 	QString _lastOpenDirectory;
-	std::set<QString> _fileset;
+	std::shared_ptr<Controller> _controller;
 };
 
 
