@@ -81,6 +81,9 @@ void MainWindow::setupWidgets() {
 	_mainViewLayout->setStretchFactor(_fileInfoGroup, 100);
 
 	setupFileCombox();
+	_tabWin = new QTabWidget(this);
+	_fileInfoGroup->setLayout(new QVBoxLayout(this));
+	_fileInfoGroup->layout()->addWidget(_tabWin);
 }
 
 void MainWindow::setupFileCombox() {
@@ -99,6 +102,8 @@ void MainWindow::onFileListChanged(int idx) {
 	if (str == "...") {
 		openNewFile();
 	}
+
+	_tabWin->setCurrentWidget(_tabMaps[str.toStdString()]);
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *e){
@@ -121,9 +126,12 @@ void MainWindow::openNewFile() {
 	if (!_controller->contain(filename.toStdString())) {
 		_controller->insert(filename.toStdString());
 		_fileCombox->addItem(filename);
+		_tabMaps[filename.toStdString()] = new QWidget(_tabWin);
+		_tabWin->addTab(_tabMaps[filename.toStdString()], QFileInfo(filename).baseName());
 	}
 
 	_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
+	_tabWin->setCurrentWidget(_tabMaps[filename.toStdString()]);
 }
 
 MainWindow::~MainWindow(){

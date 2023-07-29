@@ -55,6 +55,8 @@ private:
 	QGroupBox *_fileInfoGroup;
 private:
 	QString _lastOpenDirectory;
+	QTabWidget *_tabWin;
+	std::unordered_map<std::string, QWidget*> _tabMaps;
 	std::shared_ptr<Controller> _controller;
 };
 

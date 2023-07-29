@@ -43,7 +43,7 @@ message(STATUS "build type is ${CMAKE_BUILD_TYPE}")
 
 message(${SOURCE_DIR})
 file(GLOB SOURCE_DIR_FILES "${SOURCE_DIR}" *)
-message(STATUS "the path is "${SOURCE_DIR_FILES})
+message(STATUS "the path is ${SOURCE_DIR_FILES}")
 foreach(var ${SOURCE_DIR_FILES})
     if("${var}" STREQUAL "${SOURCE_DIR}")
         continue()
