@@ -8,7 +8,7 @@
 #include "GlobalConfig.h"
 #include "Log.h"
 #include <QFileDialog>
-#include <Contrller.h>
+#include "Contrller.h"
 
 MainWindow::MainWindow(QApplication *app, QWidget *parent)
     : QMainWindow(parent){
@@ -114,6 +114,14 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *e){
 	return QMainWindow::eventFilter(obj, e);
 }
 
+void MainWindow::updateInfo() {
+	const auto filename = _fileCombox->currentText();
+	QVBoxLayout *l = new QVBoxLayout(this);
+	_tabMaps[filename.toStdString()]->setLayout(l);
+	const auto j = _controller->info(filename.toStdString());
+	const auto str = json::dump(j);
+	LOGI("{}", str.c_str());
+}
 
 void MainWindow::openNewFile() {
 	QString filename = QFileDialog::getOpenFileName(this, "Select a File", _lastOpenDirectory);
@@ -131,7 +139,7 @@ void MainWindow::openNewFile() {
 	}
 
 	_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
-	_tabWin->setCurrentWidget(_tabMaps[filename.toStdString()]);
+	updateInfo();
 }
 
 MainWindow::~MainWindow(){

@@ -38,6 +38,8 @@ private slots:
 	void openNewFile();
 	void onFileListChanged(int idx);
 
+	void updateInfo();
+
 private:
 	QVBoxLayout			*_mainViewLayout{};
 	QWidget *_centerWin{};
