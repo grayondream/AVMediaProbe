@@ -4,6 +4,11 @@
 #include <qapplication.h>
 #include <QStatusBar>
 #include <QHBoxLayout>
+#include <QGroupBox>
+#include <QtWidgets>
+#include <vector>
+#include <set>
+#include <QMouseEvent>
 
 class MainWindow : public QMainWindow{
     Q_OBJECT
@@ -21,15 +26,18 @@ private:
     
 	void setupOpenMenu();
 	void setupConnections();
+	void setupFileCombox();
 
+	bool eventFilter(QObject *obj, QEvent *e);
 private:
 	QApplication *_app{};
 
 private slots:
 	void openNewFile();
+	void onFileListChanged(int idx);
 
 private:
-	QHBoxLayout			*_mainViewLayout{};
+	QVBoxLayout			*_mainViewLayout{};
 	QWidget *_centerWin{};
 	QStatusBar			*_infoStatusBar{};
 
@@ -41,8 +49,11 @@ private:
 	QAction *_openCloseAction{};
 	QAction *_openExitAction{};
 
+	QComboBox *_fileCombox;
+	QGroupBox *_fileInfoGroup;
 private:
 	QString _lastOpenDirectory;
+	std::set<QString> _fileset;
 };
 
 

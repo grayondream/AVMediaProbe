@@ -14,13 +14,14 @@ MainWindow::MainWindow(QApplication *app, QWidget *parent)
 	_app = app;
 	LOGI("current working directory {}", GlobalConfig::workDir().toStdString().c_str());
 
-	setupSize();
 	setupUI();
+	setupSize();
 	setupConnections();
 }
 
 void MainWindow::setupSize() {
-	
+	setMinimumSize(480, 720);
+	_fileInfoGroup->setMinimumHeight(40);
 }
 
 void MainWindow::setupUI() {
@@ -62,18 +63,50 @@ void MainWindow::setupWidgets() {
 	setWindowTitle("AVMediaProbe");
 
 	_infoStatusBar = new QStatusBar(this);
-	_mainViewLayout = new QHBoxLayout(_centerWin);
+	_mainViewLayout = new QVBoxLayout(_centerWin);
 	setStatusBar(_infoStatusBar);
 
+	_fileCombox = new QComboBox(this);
+	_fileInfoGroup = new QGroupBox(this);
+
 #if DEBUG
-	_centerWin->setStyleSheet("background-color:rgb(255,0,255);");
+	//_centerWin->setStyleSheet("background-color:rgb(255,0,255);");
 #endif //DEBUG
+
+	_mainViewLayout->addWidget(_fileCombox);
+	_mainViewLayout->addWidget(_fileInfoGroup);
+	_mainViewLayout->setStretchFactor(_fileCombox, 1);
+	_mainViewLayout->setStretchFactor(_fileInfoGroup, 100);
+
+	setupFileCombox();
+}
+
+void MainWindow::setupFileCombox() {
+	_fileCombox->addItem("...");
+	_fileCombox->installEventFilter(this);
 }
 
 void MainWindow::setupConnections() {
 	connect(_openExitAction, SIGNAL(triggered()), _app, SLOT(quit()));
 	connect(_openOpenAction, SIGNAL(triggered()), this, SLOT(openNewFile()));
+	connect(_fileCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(onFileListChanged(int)));
 }
+
+void MainWindow::onFileListChanged(int idx) {
+	auto str = _fileCombox->currentText();
+	if (str == "...") {
+		openNewFile();
+	}
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *e){
+	if (obj == _fileCombox && e->type() == QEvent::MouseButtonPress) {
+		onFileListChanged(_fileCombox->currentIndex());
+	}
+	
+	return QMainWindow::eventFilter(obj, e);
+}
+
 
 void MainWindow::openNewFile() {
 	QString filename = QFileDialog::getOpenFileName(this, "Select a File", _lastOpenDirectory);
@@ -83,6 +116,11 @@ void MainWindow::openNewFile() {
 
 	LOGI("open file {}", filename.toStdString().c_str());
 	LOGI("select last directory is {}", _lastOpenDirectory.toStdString().c_str());
+	if (_fileset.find(filename) == _fileset.end()) {
+		_fileset.insert(filename);
+		_fileCombox->addItem(filename);
+		_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
+	}
 }
 
 MainWindow::~MainWindow(){
