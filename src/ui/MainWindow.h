@@ -41,7 +41,8 @@ private slots:
 	void onFileListChanged(int idx);
 
 	void updateInfo(const QString &filename);
-	void setupUIFromJson(QWidget *w, const json::value &j);
+	void parseUIFromJson(QTreeWidgetItem *win, const json::value &j);
+
 private:
 	QVBoxLayout			*_mainViewLayout{};
 	QWidget *_centerWin{};

@@ -9,6 +9,7 @@
 #include "Log.h"
 #include <QFileDialog>
 #include "Contrller.h"
+#include <QFileInfo>
 
 MainWindow::MainWindow(QApplication *app, QWidget *parent)
     : QMainWindow(parent){
@@ -114,58 +115,44 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *e){
 	return QMainWindow::eventFilter(obj, e);
 }
 
-void MainWindow::setupUIFromJson(QWidget *w, const json::value &j) {
-	const auto str = json::dump(j);
-	LOGI("{}", str.c_str());
-	const auto pl = w->layout();
-	for (auto i = j.begin(); i != j.end(); i++) {
-		QGroupBox *g = new QGroupBox(w);
-		g->setTitle(i.key().c_str());
-		pl->addWidget(g);
-		
-		QVBoxLayout *l = new QVBoxLayout(w);
-		for (auto k = j[i.key()].begin(); k != j[i.key()].end(); k++) {
-			const auto v = j[i.key()][k.key()];
-			LOGI("{} {} {}", i.key().c_str(), k.key().c_str(), json::dump(v).c_str());
-			QLabel *key = new QLabel(w);
-			key->setText(k.key().c_str());
-			QLineEdit *value = new QLineEdit(w);
-			std::string vd = json::dump(v);
+void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
+	for (auto && i = j.begin(); i != j.end(); i++) {
+		auto item = new QTreeWidgetItem({ i.key().c_str() });
+		if (j[i.key()].is_object()) {
+			parseUIFromJson(item, j[i.key()]);
+		}else {
+			auto v = j[i.key()];
+			auto vd = json::dump(v);
 			if (v.is_string()) {
 				vd = std::string(vd.begin() + 1, vd.end() - 1);
 			}
-			
-			value->setText(vd.c_str());
-			value->setEnabled(false);
-
-			QLabel *sp = new QLabel(w);
-			sp->setMaximumWidth(20);
-			sp->setText(":");
-
-			int he = 30;
-			//key->setMinimumHeight(he);
-			//value->setMinimumHeight(he);
-			//sp->setMinimumHeight(he);
-
-			QHBoxLayout *h = new QHBoxLayout(w);
-			h->addWidget(key);
-			h->addWidget(sp);
-			h->addWidget(value);
-			l->addItem(h);
-			l->setStretchFactor(key, 1);
-			l->setStretchFactor(sp, 1);
-			l->setStretchFactor(value, 100);
+			item->setText(0, (i.key() + " : " + vd).c_str());
 		}
-		g->setLayout(l);
-	}
 
-	pl->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+		win->addChild(item);
+	}
 }
 
 void MainWindow::updateInfo(const QString &filename) {
 	QVBoxLayout *l = new QVBoxLayout(this);
 	_tabMaps[filename.toStdString()]->setLayout(l);
-	setupUIFromJson(_tabMaps[filename.toStdString()], _controller->info(filename.toStdString()));
+	//setupUIFromJson(_tabMaps[filename.toStdString()], ));
+	json::value j = _controller->info(filename.toStdString());
+	QTreeWidget *treeWin = new QTreeWidget(_tabMaps[filename.toStdString()]);
+	treeWin->headerItem()->setText(0, QFileInfo(filename).baseName());
+	treeWin->setStyle(QStyleFactory::create("windows"));
+	treeWin->setHeaderHidden(true);
+	for (auto && i = j.begin(); i != j.end(); i++) {
+		auto item = new QTreeWidgetItem({ i.key().c_str() });
+		if (j[i.key()].is_object()) {
+			parseUIFromJson(item, j[i.key()]);
+		}
+
+		treeWin->addTopLevelItem(item);
+	}
+	
+	treeWin->expandAll();
+	l->addWidget(treeWin);
 }
 
 void MainWindow::openNewFile() {

@@ -56,7 +56,7 @@ json::value FFmpegHelper::info() {
 				streamJson[kVideoColorTrc] = (int)pp->color_trc;
 			}
 
-			j[std::to_string(i).c_str()] = streamJson;
+			j[("stream " + std::to_string(i)).c_str()] = streamJson;
 		}
 	}
 
