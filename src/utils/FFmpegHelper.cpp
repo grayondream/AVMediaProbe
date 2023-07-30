@@ -1,6 +1,8 @@
 ﻿#include "FFmpegHelper.h"
 #include "FFmpegSerialKey.h"
 #include "GlobalConfig.h"
+#include <filesystem>
+#include "Log.h"
 
 FFmpegHelper::~FFmpegHelper() {
 	if (_fmtCtx) {
@@ -21,13 +23,60 @@ static std::string streamType2String(const int type) {
 		return "unknown";
 	}
 }
+
+static std::string time2string(const int64_t t, const AVRational timebase) {
+	LOGI("time is {} time base is {}, {}", t, timebase.den, timebase.num);
+	std::string ret{}; 
+	int64_t n = t * av_q2d(timebase);
+	static const char *szs[] = { "second", "minute", "hour", "day"};
+	int i = 0;
+	while (n && i < 2) {
+		ret = std::to_string(n % 60) + TRANS_FETCH(szs[i % 4]) + ret;
+		n /= 60;
+		i++;
+	}
+
+	if (n) {
+		ret = std::to_string(n % 24) + TRANS_FETCH(szs[i % 4]) + ret;
+		i++;
+		n /= 24;
+	}
+
+	if (n) {
+		ret = std::to_string(n) + TRANS_FETCH(szs[i % 4]) + ret;
+	}
+
+	return ret.empty() ? "0" + TRANS_FETCH(szs[0]) : ret;
+}
+
+static std::string size2String(const int64_t sz) {
+	std::string ret{};
+	auto n = sz;
+	static const char *szs[] = {"byte ", "kB ", "mB ", "gB ", "pB "};
+	int i = 0;
+	while (n && i < 4){
+		ret = std::to_string(n % 1024) + szs[i % 5] + ret;
+		n /= 1024;
+		i++;
+	}
+
+	if (n) {
+		ret = std::to_string(n) + szs[i % 5] + ret;
+	}
+
+	return ret.empty() ? "0byte" : ret;
+}
+
 json::value FFmpegHelper::info() {
 	int er = 0;
 	if (!_fmtCtx) {
 		do {
-			er = avformat_open_input(&_fmtCtx, _file.c_str(), nullptr, nullptr);
+			AVDictionary *op = nullptr;
+			av_dict_set_int(&op, "probesize", INT64_MAX, 0);
+			er = avformat_open_input(&_fmtCtx, _file.data(), nullptr, &op);
 			if (er < 0) break;
 			er = avformat_find_stream_info(_fmtCtx, nullptr);
+			av_dict_free(&op);
 		} while (false);
 	}
 
@@ -41,9 +90,9 @@ json::value FFmpegHelper::info() {
 			json::value streamJson = json::object{
 				{ kStreamIndex, pstream->index},
 				{ kStreamType, streamType2String(pstream->codecpar->codec_type).c_str()},
-				{ kStreamDuration, pstream->duration},
-				{ kStreamStartTime, pstream->start_time},
-				{ kStreamBitRate, pstream->codecpar->bit_rate},
+				{ kStreamDuration, time2string(pstream->duration, pstream->time_base)},
+				{ kStreamStartTime, time2string(pstream->start_time, pstream->time_base)},
+				{ kStreamBitRate, size2String(pstream->codecpar->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
 				{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 				
 			};
@@ -64,15 +113,17 @@ json::value FFmpegHelper::info() {
 	{
 		json::value mediaJson = json::object{
 		{ kFileName, _file.c_str()},
-		{ kDuration, _fmtCtx->duration},
-		{ kStartTime, _fmtCtx->start_time},
+		{ kDuration, time2string(_fmtCtx->duration, AVRational{ 1, AV_TIME_BASE })},
+		{ kStartTime, time2string(_fmtCtx->start_time, AVRational{ 1, AV_TIME_BASE })},
 		{ kFormat, _fmtCtx->iformat->name},
 		{ kMediaFormat, _fmtCtx->iformat->long_name},
-		{ kBitRate, _fmtCtx->bit_rate},
+		{ kBitRate, size2String(_fmtCtx->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
 		{ kFormatScore, _fmtCtx->probe_score},
+		{ kFilSize, size2String(std::filesystem::file_size(_file.c_str())) }
 		};
 
 		j[TRANS_FETCH(kMedia)] = mediaJson;
 	}
+
 	return j;
 }

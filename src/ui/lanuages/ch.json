@@ -1,5 +1,6 @@
 {
     "a media" : "媒体文件",
+    "a fsize" : "文件大小",
     "a stream" : "媒体流",
 
     "a filename" : "文件路径",
@@ -24,6 +25,14 @@
     "h color primaries" : "色彩原色",
     "h color space" : "颜色空间",
     "h color trc" : "传输特性",
-    "h color range" : "色彩范围"
+    "h color range" : "色彩范围",
+
+
+
+
+    "second" : "秒",
+    "minute" : "分钟",
+    "hour" : "小时",
+    "day" : "天"
     
 }

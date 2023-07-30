@@ -25,6 +25,7 @@ CONSTEXPR_EXPR(kMedia, a media);
 CONSTEXPR_EXPR(kStream, a stream);
 
 CONSTEXPR_EXPR(kFileName, a filename);
+CONSTEXPR_EXPR(kFilSize, a fsize);
 CONSTEXPR_EXPR(kDuration, b duration);
 CONSTEXPR_EXPR(kFormat, c format);
 CONSTEXPR_EXPR(kMediaFormat, d media format);
@@ -47,4 +48,10 @@ CONSTEXPR_EXPR(kVideoColorSpace, h color space);
 CONSTEXPR_EXPR(kVideoColorTrc, h color trc);
 CONSTEXPR_EXPR(kVideoColorRange, h color range);
 
+
+
+CONSTEXPR_EXPR(kSeconds, second);
+CONSTEXPR_EXPR(kMinute, minute);
+CONSTEXPR_EXPR(kHour, hour);
+CONSTEXPR_EXPR(kDay, day);
 
