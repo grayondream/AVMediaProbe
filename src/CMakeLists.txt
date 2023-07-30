@@ -36,8 +36,20 @@ endif()
 
 set(BINARY_DIR ${PROJECT_BINARY_DIR}/src/${CMAKE_BUILD_TYPE})
 set(CONFIG_DIR ${BINARY_DIR}/config)
+set(LANG_DIR ${BINARY_DIR}/lang)
 
 make_directory(${CONFIG_DIR})
+make_directory(${LANG_DIR})
+set(LANG_RES_DIR ${SOURCE_DIR}/ui/lanuages)
+file(GLOB LANG_FILES ${LANG_RES_DIR} ${LANG_RES_DIR}/*.json)
+message(${LANG_FILES})
+foreach(var ${LANG_FILES})
+    if("${var}" STREQUAL "${LANG_RES_DIR}")
+        continue()
+    endif()
+    message(STATUS "copy ${var} into ${LANG_DIR}")
+    file(COPY ${var} DESTINATION ${LANG_DIR})
+endforeach()
 
 message(STATUS "build type is ${CMAKE_BUILD_TYPE}")
 

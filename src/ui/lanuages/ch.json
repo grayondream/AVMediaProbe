@@ -1,0 +1,29 @@
+{
+    "a media" : "媒体文件",
+    "a stream" : "媒体流",
+
+    "a filename" : "文件路径",
+    "b duration" : "时长",
+    "c format" : "格式",
+    "d media format" : "媒体格式",
+    "e format score" : "媒体格式置信度",
+    "f media bitrate" : "媒体码率",
+    "g media start time" : "媒体开始时间",
+    
+    "a index" : "媒体流索引",
+    "b type" : "媒体类型",
+    "c codec" : "编码格式",
+    "c fps" : "帧率",
+    "d bitrate" : "码率",
+    "d stream duration" : "流时长",
+    "e stream start time" : "流开始时间",
+
+    "f width" : "视频宽度",
+    "f height" : "视频高度",
+
+    "h color primaries" : "色彩原色",
+    "h color space" : "颜色空间",
+    "h color trc" : "传输特性",
+    "h color range" : "色彩范围"
+    
+}

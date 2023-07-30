@@ -3,13 +3,9 @@
 #include <string>
 #include <memory>
 #include <configor/json.hpp>
+#include "def.h"
 
 using configor::json;
-
-enum class ErrorCode : int32_t {
-    None,
-    FAILED = -1
-};
 
 using ControllerKey = std::string;
 using ControllerValue = std::string;

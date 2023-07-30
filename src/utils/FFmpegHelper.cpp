@@ -1,5 +1,6 @@
 ﻿#include "FFmpegHelper.h"
 #include "FFmpegSerialKey.h"
+#include "GlobalConfig.h"
 
 FFmpegHelper::~FFmpegHelper() {
 	if (_fmtCtx) {
@@ -40,9 +41,9 @@ json::value FFmpegHelper::info() {
 			json::value streamJson = json::object{
 				{ kStreamIndex, pstream->index},
 				{ kStreamType, streamType2String(pstream->codecpar->codec_type).c_str()},
-				{ kDuration, pstream->duration},
-				{ kStartTime, pstream->start_time},
-				{ kBitRate, pstream->codecpar->bit_rate},
+				{ kStreamDuration, pstream->duration},
+				{ kStreamStartTime, pstream->start_time},
+				{ kStreamBitRate, pstream->codecpar->bit_rate},
 				{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 				
 			};
@@ -56,7 +57,7 @@ json::value FFmpegHelper::info() {
 				streamJson[kVideoColorTrc] = (int)pp->color_trc;
 			}
 
-			j[("stream " + std::to_string(i)).c_str()] = streamJson;
+			j[(TRANS_FETCH(kStream) + " " + std::to_string(i)).c_str()] = streamJson;
 		}
 	}
 
@@ -71,7 +72,7 @@ json::value FFmpegHelper::info() {
 		{ kFormatScore, _fmtCtx->probe_score},
 		};
 
-		j[kMedia] = mediaJson;
+		j[TRANS_FETCH(kMedia)] = mediaJson;
 	}
 	return j;
 }

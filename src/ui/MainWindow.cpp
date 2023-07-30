@@ -15,7 +15,7 @@ MainWindow::MainWindow(QApplication *app, QWidget *parent)
     : QMainWindow(parent){
 	_app = app;
 	LOGI("current working directory {}", GlobalConfig::workDir().toStdString().c_str());
-
+	GlobalConfig::translater().update(GlobalConfig::langFile(langFile).toStdString());
 	setupUI();
 	setupSize();
 	setupConnections();
@@ -117,7 +117,8 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *e){
 
 void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
 	for (auto && i = j.begin(); i != j.end(); i++) {
-		auto item = new QTreeWidgetItem({ i.key().c_str() });
+		LOGI("key is {}", i.key().c_str());
+		auto item = new QTreeWidgetItem({ TRANS_FETCH(i.key()).c_str() });
 		if (j[i.key()].is_object()) {
 			parseUIFromJson(item, j[i.key()]);
 		}else {
@@ -126,7 +127,7 @@ void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
 			if (v.is_string()) {
 				vd = std::string(vd.begin() + 1, vd.end() - 1);
 			}
-			item->setText(0, (i.key() + " : " + vd).c_str());
+			item->setText(0, (TRANS_FETCH(i.key()) + " : " + vd).c_str());
 		}
 
 		win->addChild(item);
@@ -152,6 +153,8 @@ void MainWindow::updateInfo(const QString &filename) {
 	}
 	
 	treeWin->expandAll();
+	//treeWin->setSortingEnabled(true);
+	//treeWin->header()->setSortIndicator(0, Qt::AscendingOrder);
 	l->addWidget(treeWin);
 }
 
