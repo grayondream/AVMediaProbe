@@ -27,7 +27,11 @@ static std::string streamType2String(const int type) {
 static std::string time2string(const int64_t t, const AVRational timebase) {
 	LOGI("time is {} time base is {}, {}", t, timebase.den, timebase.num);
 	std::string ret{}; 
-	int64_t n = t * av_q2d(timebase);
+	double ms = t * av_q2d(timebase);
+	if (ms - int64_t(ms) > 0.000000001) {
+		ret = std::to_string((ms - int64_t(ms)) * 1000) + TRANS_FETCH(kMSeconds) + ret;
+	}
+	int64_t n = ms;
 	static const char *szs[] = { "second", "minute", "hour", "day"};
 	int i = 0;
 	while (n && i < 2) {

@@ -50,6 +50,7 @@ CONSTEXPR_EXPR(kVideoColorRange, h color range);
 
 
 
+CONSTEXPR_EXPR(kMSeconds, millseconds);
 CONSTEXPR_EXPR(kSeconds, second);
 CONSTEXPR_EXPR(kMinute, minute);
 CONSTEXPR_EXPR(kHour, hour);
