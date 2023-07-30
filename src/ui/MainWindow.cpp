@@ -128,7 +128,6 @@ void MainWindow::setupUIFromJson(QWidget *w, const json::value &j) {
 			const auto v = j[i.key()][k.key()];
 			LOGI("{} {} {}", i.key().c_str(), k.key().c_str(), json::dump(v).c_str());
 			QLabel *key = new QLabel(w);
-			key->setMaximumWidth(50);
 			key->setText(k.key().c_str());
 			QLineEdit *value = new QLineEdit(w);
 			std::string vd = json::dump(v);
@@ -143,16 +142,24 @@ void MainWindow::setupUIFromJson(QWidget *w, const json::value &j) {
 			sp->setMaximumWidth(20);
 			sp->setText(":");
 
+			int he = 30;
+			//key->setMinimumHeight(he);
+			//value->setMinimumHeight(he);
+			//sp->setMinimumHeight(he);
+
 			QHBoxLayout *h = new QHBoxLayout(w);
 			h->addWidget(key);
 			h->addWidget(sp);
 			h->addWidget(value);
 			l->addItem(h);
+			l->setStretchFactor(key, 1);
+			l->setStretchFactor(sp, 1);
+			l->setStretchFactor(value, 100);
 		}
 		g->setLayout(l);
 	}
 
-	pl->addItem(new QSpacerItem(20, 10000));
+	pl->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 void MainWindow::updateInfo(const QString &filename) {
