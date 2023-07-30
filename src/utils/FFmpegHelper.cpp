@@ -21,14 +21,6 @@ json::value FFmpegHelper::info() {
 
 	if (!_fmtCtx) return {};
 	json::value j;
-	{
-		json::value mediaJson = json::object{
-		{ kFileName, _file.c_str()},
-		{ kDuration, _fmtCtx->duration}
-		};
-
-		j[kMedia] = mediaJson;
-	}
 
 	{
 		for (int i = 0; i < static_cast<int>(_fmtCtx->nb_streams); i++) {
@@ -39,6 +31,15 @@ json::value FFmpegHelper::info() {
 
 			j[std::to_string(i).c_str()] = streamJson;
 		}
+	}
+
+	{
+		json::value mediaJson = json::object{
+		{ kFileName, _file.c_str()},
+		{ kDuration, _fmtCtx->duration},
+		};
+
+		j[kMedia] = mediaJson;
 	}
 	return j;
 }

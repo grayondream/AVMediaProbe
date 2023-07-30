@@ -114,13 +114,51 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *e){
 	return QMainWindow::eventFilter(obj, e);
 }
 
-void MainWindow::updateInfo() {
-	const auto filename = _fileCombox->currentText();
-	QVBoxLayout *l = new QVBoxLayout(this);
-	_tabMaps[filename.toStdString()]->setLayout(l);
-	const auto j = _controller->info(filename.toStdString());
+void MainWindow::setupUIFromJson(QWidget *w, const json::value &j) {
 	const auto str = json::dump(j);
 	LOGI("{}", str.c_str());
+	const auto pl = w->layout();
+	for (auto i = j.begin(); i != j.end(); i++) {
+		QGroupBox *g = new QGroupBox(w);
+		g->setTitle(i.key().c_str());
+		pl->addWidget(g);
+		
+		QVBoxLayout *l = new QVBoxLayout(w);
+		for (auto k = j[i.key()].begin(); k != j[i.key()].end(); k++) {
+			const auto v = j[i.key()][k.key()];
+			LOGI("{} {} {}", i.key().c_str(), k.key().c_str(), json::dump(v).c_str());
+			QLabel *key = new QLabel(w);
+			key->setMaximumWidth(50);
+			key->setText(k.key().c_str());
+			QLineEdit *value = new QLineEdit(w);
+			std::string vd = json::dump(v);
+			if (v.is_string()) {
+				vd = std::string(vd.begin() + 1, vd.end() - 1);
+			}
+			
+			value->setText(vd.c_str());
+			value->setEnabled(false);
+
+			QLabel *sp = new QLabel(w);
+			sp->setMaximumWidth(20);
+			sp->setText(":");
+
+			QHBoxLayout *h = new QHBoxLayout(w);
+			h->addWidget(key);
+			h->addWidget(sp);
+			h->addWidget(value);
+			l->addItem(h);
+		}
+		g->setLayout(l);
+	}
+
+	pl->addItem(new QSpacerItem(20, 10000));
+}
+
+void MainWindow::updateInfo(const QString &filename) {
+	QVBoxLayout *l = new QVBoxLayout(this);
+	_tabMaps[filename.toStdString()]->setLayout(l);
+	setupUIFromJson(_tabMaps[filename.toStdString()], _controller->info(filename.toStdString()));
 }
 
 void MainWindow::openNewFile() {
@@ -136,10 +174,10 @@ void MainWindow::openNewFile() {
 		_fileCombox->addItem(filename);
 		_tabMaps[filename.toStdString()] = new QWidget(_tabWin);
 		_tabWin->addTab(_tabMaps[filename.toStdString()], QFileInfo(filename).baseName());
+		updateInfo(filename);
 	}
 
 	_fileCombox->setCurrentIndex(_fileCombox->findText(filename));
-	updateInfo();
 }
 
 MainWindow::~MainWindow(){

@@ -10,7 +10,9 @@
 #include <set>
 #include <QMouseEvent>
 #include <memory>
+#include "configor/json.hpp"
 
+using configor::json;
 class Controller;
 class MainWindow : public QMainWindow{
     Q_OBJECT
@@ -38,8 +40,8 @@ private slots:
 	void openNewFile();
 	void onFileListChanged(int idx);
 
-	void updateInfo();
-
+	void updateInfo(const QString &filename);
+	void setupUIFromJson(QWidget *w, const json::value &j);
 private:
 	QVBoxLayout			*_mainViewLayout{};
 	QWidget *_centerWin{};
