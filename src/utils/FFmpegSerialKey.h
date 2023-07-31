@@ -40,6 +40,9 @@ CONSTEXPR_EXPR(kFps, c fps);
 CONSTEXPR_EXPR(kStreamBitRate, d bitrate);
 CONSTEXPR_EXPR(kStreamDuration, d stream duration);
 CONSTEXPR_EXPR(kStreamStartTime, e stream start time);
+CONSTEXPR_EXPR(kStreamFrames, z frames);
+CONSTEXPR_EXPR(kStreamFramesNumber, z frame number);
+CONSTEXPR_EXPR(kStreamFrame, a frame);
 
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
@@ -48,11 +51,14 @@ CONSTEXPR_EXPR(kVideoColorSpace, h color space);
 CONSTEXPR_EXPR(kVideoColorTrc, h color trc);
 CONSTEXPR_EXPR(kVideoColorRange, h color range);
 
-
+CONSTEXPR_EXPR(kAudioSampltRate, h sample rate);
+CONSTEXPR_EXPR(kAudioChannel, i channel);
+CONSTEXPR_EXPR(kAudioChannelLayout, j layout);
 
 CONSTEXPR_EXPR(kMSeconds, millseconds);
 CONSTEXPR_EXPR(kSeconds, second);
 CONSTEXPR_EXPR(kMinute, minute);
 CONSTEXPR_EXPR(kHour, hour);
 CONSTEXPR_EXPR(kDay, day);
+CONSTEXPR_EXPR(kHz, hz);
 

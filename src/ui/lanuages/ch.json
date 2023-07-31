@@ -18,6 +18,8 @@
     "d bitrate" : "码率",
     "d stream duration" : "流时长",
     "e stream start time" : "流开始时间",
+    "z frame number" : "帧数量",
+    "z frames" : "当前流所有帧信息",
 
     "f width" : "视频宽度",
     "f height" : "视频高度",
@@ -27,12 +29,15 @@
     "h color trc" : "传输特性",
     "h color range" : "色彩范围",
 
-
+    "h sample rate" : "采样率",
+    "i channel" : "通道数",
+    "j layout" : "通道布局",
 
     "millseconds" : "毫秒",
     "second" : "秒",
     "minute" : "分钟",
     "hour" : "小时",
-    "day" : "天"
-    
+    "day" : "天",
+    "hz" : "赫兹",
+    "a frame" : "帧"
 }
