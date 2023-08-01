@@ -39,6 +39,7 @@ private:
 private slots:
 	void openNewFile();
 	void onFileListChanged(int idx);
+	void onShowViewChecked(bool checked);
 
 	void updateInfo(const QString &filename);
 	void parseUIFromJson(QTreeWidgetItem *win, const json::value &j);
@@ -55,6 +56,9 @@ private:
 	QAction *_openOpenAction{};
 	QAction *_openCloseAction{};
 	QAction *_openExitAction{};
+
+	QMenu *_viewMenu{};
+	QAction *_showFramesAction{};
 
 	QComboBox *_fileCombox;
 	QGroupBox *_fileInfoGroup;

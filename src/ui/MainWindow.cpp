@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include "Contrller.h"
 #include <QFileInfo>
+#include "FFmpegSerialKey.h"
 
 MainWindow::MainWindow(QApplication *app, QWidget *parent)
     : QMainWindow(parent){
@@ -55,7 +56,16 @@ void MainWindow::setupOpenMenu() {
 	_openCloseAction->setText("Close");
 	_openExitAction->setText("Exit");
 
+	_viewMenu = new QMenu(_menuBar);
+	_showFramesAction = new QAction(_viewMenu);
+	_viewMenu->addAction(_showFramesAction);
+
+	_viewMenu->setTitle("Views");
+	_showFramesAction->setText("Show Frames");
+	_showFramesAction->setCheckable(true);
+
 	_menuBar->addMenu(_openMenu);
+	_menuBar->addMenu(_viewMenu);
 }
 
 void MainWindow::setupWidgets() {
@@ -96,6 +106,20 @@ void MainWindow::setupConnections() {
 	connect(_openExitAction, SIGNAL(triggered()), _app, SLOT(quit()));
 	connect(_openOpenAction, SIGNAL(triggered()), this, SLOT(openNewFile()));
 	connect(_fileCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(onFileListChanged(int)));
+	connect(_showFramesAction, &QAction::triggered, this, &MainWindow::onShowViewChecked);
+}
+
+void MainWindow::onShowViewChecked(bool checked) {
+	LOGI("show frame action checked {}", static_cast<int>(checked));
+	auto str = _fileCombox->currentText();
+	if (_tabMaps.find(str.toStdString()) != _tabMaps.end()) {
+		auto win = dynamic_cast<QTreeWidget*>(_tabMaps[str.toStdString()]->layout()->widget());
+		if (win) {
+			
+			
+		}
+	}
+	
 }
 
 void MainWindow::onFileListChanged(int idx) {
@@ -120,7 +144,9 @@ void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
 		LOGI("key is {}", i.key().c_str());
 		auto item = new QTreeWidgetItem({ TRANS_FETCH(i.key()).c_str() });
 		if (j[i.key()].is_object()) {
-			parseUIFromJson(item, j[i.key()]);
+			if (i.key() != kStreamFrames || _showFramesAction->isChecked()) {
+				parseUIFromJson(item, j[i.key()]);
+			}
 		}else {
 			auto v = j[i.key()];
 			auto vd = json::dump(v);
