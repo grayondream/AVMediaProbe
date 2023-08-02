@@ -133,7 +133,7 @@ json::value pkts2json(std::vector<AVPacket*>& pkts) {
 		str += " position=" + std::to_string(p->pos);
 		str += " keyframe=" + std::to_string(!!(p->flags & AV_PKT_FLAG_KEY));
 		frames[TRANS_FETCH(kStreamFrame) + str_format(f.c_str(), i++)] = str;
-#if DEBUG
+#if 1
 		if (i > 10) break;
 #endif
 	}

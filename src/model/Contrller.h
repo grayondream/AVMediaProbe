@@ -21,4 +21,5 @@ public:
 
 private:
 	std::unordered_map < ControllerKey, std::shared_ptr<FFmpegHelper>> _infos;
+	std::unordered_map < ControllerKey, json::value> _infosJson;
 };

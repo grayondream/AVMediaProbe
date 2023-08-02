@@ -42,8 +42,9 @@ private slots:
 	void onShowViewChecked(bool checked);
 
 	void updateInfo(const QString &filename);
+	QTreeWidget* paresTreeWidgetFromJson(const QString &filena, const json::value &j);
 	void parseUIFromJson(QTreeWidgetItem *win, const json::value &j);
-
+	void clearLayout(QLayout* layout);
 private:
 	QVBoxLayout			*_mainViewLayout{};
 	QWidget *_centerWin{};

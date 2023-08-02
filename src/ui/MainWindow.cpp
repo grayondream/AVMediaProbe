@@ -109,15 +109,30 @@ void MainWindow::setupConnections() {
 	connect(_showFramesAction, &QAction::triggered, this, &MainWindow::onShowViewChecked);
 }
 
+void MainWindow::clearLayout(QLayout* layout){
+	while (QLayoutItem* item = layout->takeAt(0)){
+		if (QWidget* widget = item->widget())
+			widget->deleteLater();
+
+		if (QLayout* childLayout = item->layout())
+			clearLayout(childLayout);
+
+		if (QSpacerItem* spaerItem = item->spacerItem())
+			layout->removeItem(spaerItem);
+
+		delete item;
+	}
+}
+
 void MainWindow::onShowViewChecked(bool checked) {
 	LOGI("show frame action checked {}", static_cast<int>(checked));
 	auto str = _fileCombox->currentText();
+	if (str == "...") return;
 	if (_tabMaps.find(str.toStdString()) != _tabMaps.end()) {
-		auto win = dynamic_cast<QTreeWidget*>(_tabMaps[str.toStdString()]->layout()->widget());
-		if (win) {
-			
-			
-		}
+		clearLayout(_tabMaps[str.toStdString()]->layout());
+		delete _tabMaps[str.toStdString()]->layout();
+		_tabMaps[str.toStdString()]->update();
+		updateInfo(str);
 	}
 	
 }
@@ -156,15 +171,13 @@ void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
 			item->setText(0, (TRANS_FETCH(i.key()) + " : " + vd).c_str());
 		}
 
-		win->addChild(item);
+		if (i.key() != kStreamFrames || _showFramesAction->isChecked()) {
+			win->addChild(item);
+		}
 	}
 }
 
-void MainWindow::updateInfo(const QString &filename) {
-	QVBoxLayout *l = new QVBoxLayout(this);
-	_tabMaps[filename.toStdString()]->setLayout(l);
-	//setupUIFromJson(_tabMaps[filename.toStdString()], ));
-	json::value j = _controller->info(filename.toStdString());
+QTreeWidget* MainWindow::paresTreeWidgetFromJson(const QString &filename, const json::value &j){
 	QTreeWidget *treeWin = new QTreeWidget(_tabMaps[filename.toStdString()]);
 	treeWin->headerItem()->setText(0, QFileInfo(filename).baseName());
 	treeWin->setStyle(QStyleFactory::create("windows"));
@@ -174,14 +187,23 @@ void MainWindow::updateInfo(const QString &filename) {
 		if (j[i.key()].is_object()) {
 			parseUIFromJson(item, j[i.key()]);
 		}
-
 		treeWin->addTopLevelItem(item);
 	}
+
+	treeWin->expandToDepth(0);
+	return treeWin;
+}
+
+void MainWindow::updateInfo(const QString &filename) {
+	if (filename == "...") return;
+	QVBoxLayout *l = new QVBoxLayout(this);
+	_tabMaps[filename.toStdString()]->setLayout(l);
+	//setupUIFromJson(_tabMaps[filename.toStdString()], ));
+	json::value j = _controller->info(filename.toStdString());
 	
-	treeWin->expandAll();
 	//treeWin->setSortingEnabled(true);
 	//treeWin->header()->setSortIndicator(0, Qt::AscendingOrder);
-	l->addWidget(treeWin);
+	l->addWidget(paresTreeWidgetFromJson(filename, j));
 }
 
 void MainWindow::openNewFile() {

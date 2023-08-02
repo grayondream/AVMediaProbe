@@ -10,7 +10,11 @@ ErrorCode Controller::insert(const std::string &key) {
 }
 
 json::value Controller::info(const std::string &file) {
-	return _infos[file]->info();
+	if (_infosJson.find(file) == _infosJson.end()) {
+		_infosJson[file] = _infos[file]->info();
+	}
+
+	return _infosJson[file];
 }
 
 
