@@ -3,84 +3,13 @@
 #include "GlobalConfig.h"
 #include <filesystem>
 #include "Log.h"
+#include "FFKeyString.h"
 
 FFmpegHelper::~FFmpegHelper() {
 	if (_fmtCtx) {
 		avformat_close_input(&_fmtCtx);
 		_fmtCtx = nullptr;
 	}
-}
-
-static std::string streamType2String(const int type) {
-	switch (type) {
-	case AVMEDIA_TYPE_AUDIO:
-		return "audio";
-	case AVMEDIA_TYPE_SUBTITLE:
-		return "subtitle";
-	case AVMEDIA_TYPE_VIDEO:
-		return "video";
-	default:
-		return "unknown";
-	}
-}
-
-template<typename ... Args>
-static std::string str_format(const std::string &format, Args ... args){
-	auto size_buf = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1;
-	std::unique_ptr<char[]> buf(new(std::nothrow) char[size_buf]);
-
-	if (!buf)
-		return std::string("");
-
-	std::snprintf(buf.get(), size_buf, format.c_str(), args ...);
-	return std::string(buf.get(), buf.get() + size_buf - 1);
-}
-
-static std::string time2string(const int64_t t, const AVRational timebase) {
-	LOGI("time is {} time base is {}, {}", t, timebase.den, timebase.num);
-	std::string ret{}; 
-	double ms = t * av_q2d(timebase);
-	if (ms - int64_t(ms) > 0.000000001) {
-		ret = std::to_string((ms - int64_t(ms)) * 1000) + TRANS_FETCH(kMSeconds) + ret;
-	}
-	int64_t n = ms;
-	static const char *szs[] = { "second", "minute", "hour", "day"};
-	int i = 0;
-	while (n && i < 2) {
-		ret = std::to_string(n % 60) + TRANS_FETCH(szs[i % 4]) + ret;
-		n /= 60;
-		i++;
-	}
-
-	if (n) {
-		ret = std::to_string(n % 24) + TRANS_FETCH(szs[i % 4]) + ret;
-		i++;
-		n /= 24;
-	}
-
-	if (n) {
-		ret = std::to_string(n) + TRANS_FETCH(szs[i % 4]) + ret;
-	}
-
-	return ret.empty() ? "0" + TRANS_FETCH(szs[0]) : ret;
-}
-
-static std::string size2String(const int64_t sz) {
-	std::string ret{};
-	auto n = sz;
-	static const char *szs[] = {"byte ", "kB ", "mB ", "gB ", "pB "};
-	int i = 0;
-	while (n && i < 4){
-		ret = std::to_string(n % 1024) + szs[i % 5] + ret;
-		n /= 1024;
-		i++;
-	}
-
-	if (n) {
-		ret = std::to_string(n) + szs[i % 5] + ret;
-	}
-
-	return ret.empty() ? "0byte" : ret;
 }
 
 json::value parseMedia(const AVFormatContext *fmt) {
@@ -144,7 +73,7 @@ void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const
 	AVCodecParameters *pp = ps->codecpar;
 	streamJson[kVideoWidth] = pp->width;
 	streamJson[kVideoHeight] = pp->height;
-	streamJson[kVideoColorPri] = (int)pp->color_primaries;
+	streamJson[kVideoColorPri] = to_string(pp->color_primaries);
 	streamJson[kVideoColorRange] = (int)pp->color_range;
 	streamJson[kVideoColorSpace] = (int)pp->color_space;
 	streamJson[kVideoColorTrc] = (int)pp->color_trc;
