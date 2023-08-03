@@ -27,10 +27,12 @@ json::value parseMedia(const AVFormatContext *fmt) {
 
 void parseCommonStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *pstream) {
 	AVCodecParameters *pp = pstream->codecpar;
+	auto duration = pstream->duration == AV_NOPTS_VALUE ? fmt->duration : pstream->duration;
+	auto timbase = pstream->duration == AV_NOPTS_VALUE ? AVRational{ 1, AV_TIME_BASE }: pstream->time_base;
 	streamJson = json::object{
 		{ kStreamIndex, pstream->index},
 		{ kStreamType, streamType2String(pstream->codecpar->codec_type).c_str()},
-		{ kStreamDuration, time2string(pstream->duration, pstream->time_base)},
+		{ kStreamDuration, time2string(duration, timbase)},
 		{ kStreamStartTime, time2string(pstream->start_time, pstream->time_base)},
 		{ kStreamBitRate, size2String(pstream->codecpar->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
 		{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
