@@ -45,8 +45,17 @@ void MainWindow::setupOpenMenu() {
 	_openOpenAction = new QAction(_openMenu);
 	_openCloseAction = new QAction(_openMenu);
 	_openExitAction = new QAction(_openMenu);
+	
+	_openExportAction = new QAction(_openMenu);
+	_openExportJsonAction = new QAction(_openExportAction);
+	_openExportAction->setMenu(new QMenu(_menuBar));
+	_openExportAction->menu()->addAction(_openExportJsonAction);
+
+	_openExportAction->setText("Export");
+	_openExportJsonAction->setText("json");
 
 	_openMenu->addAction(_openOpenAction);
+	_openMenu->addAction(_openExportAction);
 	_openMenu->addSeparator();
 	_openMenu->addAction(_openCloseAction);
 	_openMenu->addAction(_openExitAction);
@@ -107,6 +116,40 @@ void MainWindow::setupConnections() {
 	connect(_openOpenAction, SIGNAL(triggered()), this, SLOT(openNewFile()));
 	connect(_fileCombox, SIGNAL(currentIndexChanged(int)), this, SLOT(onFileListChanged(int)));
 	connect(_showFramesAction, &QAction::triggered, this, &MainWindow::onShowViewChecked);
+	connect(_openExportJsonAction, SIGNAL(triggered()), this, SLOT(onExportJson()));
+}
+
+json::value jsonTranslate(const json::value &j) {
+	json::value jj;
+	for (auto i = j.begin(); i != j.end(); i++) {
+		if (i->is_object()) {
+			jj[TRANS_FETCH(i.key())] = jsonTranslate(j[i.key()]);
+		}else {
+			jj[TRANS_FETCH(i.key())] = j[i.key()];
+		}
+	}
+	
+	return jj;
+}
+
+void MainWindow::onExportJson() {
+	auto str = _fileCombox->currentText();
+	if (str == "...") return;
+	if (_tabMaps.find(str.toStdString()) != _tabMaps.end()) {
+		auto j = _controller->info(str.toStdString());
+		const std::string str = json::dump((jsonTranslate(j)));
+		QString filename = QFileDialog::getSaveFileName(this, "Select a File to Export", _lastExportDirectory);
+		if (filename.isEmpty()) return;
+
+		_lastExportDirectory = QFileInfo(filename).absolutePath();
+		filename += ".json";
+		QFile file(filename);
+		file.open(QIODevice::WriteOnly);
+		if (file.isOpen()) {
+			file.write(str.c_str());
+			file.close();
+		}
+	}
 }
 
 void MainWindow::clearLayout(QLayout* layout){

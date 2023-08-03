@@ -38,6 +38,8 @@ private:
 
 private slots:
 	void openNewFile();
+	void onExportJson();
+
 	void onFileListChanged(int idx);
 	void onShowViewChecked(bool checked);
 
@@ -58,6 +60,9 @@ private:
 	QAction *_openCloseAction{};
 	QAction *_openExitAction{};
 
+	QAction *_openExportAction{};
+	QAction *_openExportJsonAction{};
+
 	QMenu *_viewMenu{};
 	QAction *_showFramesAction{};
 
@@ -65,6 +70,7 @@ private:
 	QGroupBox *_fileInfoGroup;
 private:
 	QString _lastOpenDirectory;
+	QString _lastExportDirectory;
 	QTabWidget *_tabWin;
 	std::unordered_map<std::string, QWidget*> _tabMaps;
 	std::shared_ptr<Controller> _controller;
