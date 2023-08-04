@@ -76,9 +76,9 @@ void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const
 	streamJson[kVideoWidth] = pp->width;
 	streamJson[kVideoHeight] = pp->height;
 	streamJson[kVideoColorPri] = to_string(pp->color_primaries);
-	streamJson[kVideoColorRange] = (int)pp->color_range;
-	streamJson[kVideoColorSpace] = (int)pp->color_space;
-	streamJson[kVideoColorTrc] = (int)pp->color_trc;
+	streamJson[kVideoColorRange] = to_string(pp->color_range);
+	streamJson[kVideoColorSpace] = to_string(pp->color_space);
+	streamJson[kVideoColorTrc] = to_string(pp->color_trc);
 	streamJson[kStreamFramesNumber] = pkts.size();
 	streamJson[kStreamFrames] = pkts2json(pkts);
 }

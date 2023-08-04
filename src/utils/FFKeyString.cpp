@@ -46,18 +46,124 @@ std::string to_string(const AVColorPrimaries r) {
 }
 
 std::string to_string(const AVColorTransferCharacteristic r) {
-	return {};
+    switch(r){
+        case AVCOL_TRC_RESERVED0:
+            return "reserved";
+        case AVCOL_TRC_BT709:
+            return "BT.709";
+        case AVCOL_TRC_UNSPECIFIED:
+            return "unspecified";
+        case AVCOL_TRC_RESERVED:
+            return "reserved";
+        case AVCOL_TRC_GAMMA22:
+            return "GAMMA.22";
+        case AVCOL_TRC_GAMMA28:
+            return "GAMMA.28";
+        case AVCOL_TRC_SMPTE170M:
+            return "SMPTE.170M";
+        case AVCOL_TRC_SMPTE240M:
+            return "SMPTE.240M";
+        case AVCOL_TRC_LINEAR:
+            return "Linear";
+        case AVCOL_TRC_LOG:
+            return "LOG";
+        case AVCOL_TRC_LOG_SQRT:
+            return "LOG.SQRT";
+        case AVCOL_TRC_IEC61966_2_4:
+            return "IEC61966.2.4";
+        case AVCOL_TRC_BT1361_ECG:
+            return "BT.1361.ECG";
+        case AVCOL_TRC_IEC61966_2_1:
+            return "IEC.61966.2.1";
+        case AVCOL_TRC_BT2020_10:
+            return "BT.2020.10";
+        case AVCOL_TRC_BT2020_12:
+            return "BT.2020.12";
+        case AVCOL_TRC_SMPTE2084:
+            return "SMPTE.2084";
+        case AVCOL_TRC_SMPTE428:
+            return "SMPTE.428";
+        case AVCOL_TRC_ARIB_STD_B67:
+            return "STD.B67";
+        case AVCOL_TRC_NB:
+            return "number";
+    }
+
+    return "";
 }
 
 std::string to_string(const AVColorSpace r) {
-	return {};
+	switch(r){
+        case AVCOL_SPC_RGB:
+            return "RGB";
+        case AVCOL_SPC_BT709:
+            return "BT.709";
+        case AVCOL_SPC_UNSPECIFIED:
+            return "unspecified";
+        case AVCOL_SPC_RESERVED:
+            return "reserved";
+        case AVCOL_SPC_FCC:
+            return "FCC";
+        case AVCOL_SPC_BT470BG:
+            return "BT.470BG";
+        case AVCOL_SPC_SMPTE170M:
+            return "SMPTE.170M";
+        case AVCOL_SPC_SMPTE240M:
+            return "SMPTE.240M";
+        case AVCOL_SPC_YCGCO:
+            return "YCGCO";
+        case AVCOL_SPC_BT2020_NCL:
+            return "BT.2020.NCL";
+        case AVCOL_SPC_BT2020_CL:
+            return "BT.2020.CL";
+        case AVCOL_SPC_SMPTE2085:
+            return "SMPTE.2085";
+        case AVCOL_SPC_CHROMA_DERIVED_NCL:
+            return "CHROMA.DERIVED.NCL";
+        case AVCOL_SPC_CHROMA_DERIVED_CL:
+            return "CHROMA.DERIVED.CL";
+        case AVCOL_SPC_ICTCP:
+            return "ICTCP";
+        case AVCOL_SPC_NB:
+            return "number";
+    }
+    return {};
 }
 
 std::string to_string(const AVColorRange r) {
+    switch(r){
+        case AVCOL_RANGE_UNSPECIFIED:
+            return "unspecified";
+        case AVCOL_RANGE_MPEG:
+            return "Full";
+        case AVCOL_RANGE_JPEG:
+            return "Limited";
+        case AVCOL_RANGE_NB:
+            return "number";
+    }
 	return {};
 }
 
 std::string to_string(const AVChromaLocation r) {
+    switch(r){
+        case AVCHROMA_LOC_UNSPECIFIED:
+            return "unspecified";
+        case AVCHROMA_LOC_LEFT:
+            return "left";
+        case AVCHROMA_LOC_CENTER:
+            return "center";
+        case AVCHROMA_LOC_TOPLEFT:
+            return "top left";
+        case AVCHROMA_LOC_TOP:
+            return "top";
+        case AVCHROMA_LOC_BOTTOMLEFT:
+            return "bottom left";
+        case AVCHROMA_LOC_BOTTOM:
+            return "bottom";
+        case AVCHROMA_LOC_NB:
+            return "number";
+    }
+
 	return "";
 }
 

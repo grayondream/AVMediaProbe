@@ -24,10 +24,10 @@
     "f width" : "视频宽度",
     "f height" : "视频高度",
 
+    "hacolor range" : "色彩范围",
     "h color primaries" : "色彩原色",
     "h color space" : "颜色空间",
     "h color trc" : "传输特性",
-    "h color range" : "色彩范围",
 
     "h sample rate" : "采样率",
     "i channel" : "通道数",
@@ -39,5 +39,5 @@
     "hour" : "小时",
     "day" : "天",
     "hz" : "赫兹",
-    "a frame" : "帧"
+    "a frame" : "帧",
 }

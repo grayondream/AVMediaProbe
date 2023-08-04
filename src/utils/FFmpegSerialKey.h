@@ -46,10 +46,10 @@ CONSTEXPR_EXPR(kStreamFrame, a frame);
 
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
+CONSTEXPR_EXPR(kVideoColorRange, hacolor range);
 CONSTEXPR_EXPR(kVideoColorPri, h color primaries);
 CONSTEXPR_EXPR(kVideoColorSpace, h color space);
 CONSTEXPR_EXPR(kVideoColorTrc, h color trc);
-CONSTEXPR_EXPR(kVideoColorRange, h color range);
 
 CONSTEXPR_EXPR(kAudioSampltRate, h sample rate);
 CONSTEXPR_EXPR(kAudioChannel, i channel);
