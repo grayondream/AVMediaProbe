@@ -10,7 +10,7 @@ extern "C" {
 
 using configor::json;
 
-
+class FileContext;
 class FFmpegHelper{
 public:
 	FFmpegHelper(const std::string &file) { _file = file; }
@@ -22,6 +22,5 @@ public:
 
 public:
     std::string _file;
-	AVFormatContext *_fmtCtx{};
-	std::vector<std::pair<AVCodecContext *, AVCodec *>> _codecs;
+	std::shared_ptr<FileContext> _filectx;
 };

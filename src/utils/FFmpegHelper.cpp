@@ -5,11 +5,21 @@
 #include "Log.h"
 #include "FFKeyString.h"
 
+struct StreamContext {
+	std::vector<std::shared_ptr<AVPacket>> _pkts{};
+	int64_t _totalSize{};
+	std::shared_ptr<AVCodecContext> _pcodecctx{};
+	std::shared_ptr<AVCodec> _pcodec{};
+	std::shared_ptr<AVStream> _pstream{};
+};
+
+struct FileContext{
+	std::shared_ptr<AVFormatContext> _fmtCtx{};
+	std::vector<StreamContext> _streams{};
+};
+
 FFmpegHelper::~FFmpegHelper() {
-	if (_fmtCtx) {
-		avformat_close_input(&_fmtCtx);
-		_fmtCtx = nullptr;
-	}
+	_fmtCtx = nullptr;
 }
 
 json::value parseMedia(const AVFormatContext *fmt) {
@@ -119,30 +129,29 @@ void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const
 
 }
 
-std::vector<std::vector<AVPacket*>> readAllPacket(const AVFormatContext *fmt) {
-	std::vector<std::vector<AVPacket*>> pkts{ AVMEDIA_TYPE_NB, std::vector<AVPacket*>{} };
-
+ std::shared_ptr<FileContext> readFileContext(const std::shared_ptr< AVFormatContext> fmt) {
+	if (!fmt || !fmt->nb_streams) return nullptr;
+	
+	std::vector<StreamContext> sc(fmt->nb_streams);
 	while (true) {
 		AVPacket* pkt = av_packet_alloc();
-		if (av_read_frame(const_cast<AVFormatContext*>(fmt), pkt) < 0) break;
-		pkts[fmt->streams[pkt->stream_index]->codecpar->codec_type].emplace_back(pkt);
+		if (av_read_frame(fmt.get(), pkt) < 0) break;
+		sc[pkt->stream_index]._pkts.emplace_back(std::shared_ptr<AVPacket>(pkt, [](AVPacket *pkt) { av_packet_unref(pkt); }));
+		sc[pkt->stream_index]._totalSize += pkt->size;
 	}
-
-	return pkts;
-}
-
-void releaseAllPacket(std::vector<std::vector<AVPacket*>> &pkt) {
-	for (auto i : pkt) {
-		for (std::size_t j = 0; j < i.size(); j++) {
-			av_packet_free(&i[j]);
-		}
-	}
+	
+	auto ctx = std::make_shared<FileContext>();
+	ctx->_streams = sc;
+	return ctx;
 }
 
 int FFmpegHelper::opencodec(AVStream *ps) {
 	const AVCodec*pc = avcodec_find_decoder(ps->codecpar->codec_id);
 	AVCodecContext *pcc = avcodec_alloc_context3(pc);
-	_codecs.emplace_back(std::make_pair(pcc, const_cast<AVCodec*>(pc)));
+	_codecs.emplace_back(std::make_pair(std::shared_ptr<AVCodecContext>(pcc, [](AVCodecContext *pc) {
+		avcodec_free_context(&pc);
+		pc = nullptr;
+	}), std::shared_ptr<AVCodec>(const_cast<AVCodec*>(pc), [](AVCodec *pc) {})));
 	return avcodec_open2(pcc, pc, nullptr);
 }
 
@@ -152,9 +161,11 @@ int FFmpegHelper::init(const std::string& file) {
 		do {
 			AVDictionary *op = nullptr;
 			av_dict_set_int(&op, "probesize", INT64_MAX, 0);
-			er = avformat_open_input(&_fmtCtx, _file.data(), nullptr, &op);
+			AVFormatContext *pfc{};
+			er = avformat_open_input(&pfc, _file.data(), nullptr, &op);
 			if (er < 0) break;
-			er = avformat_find_stream_info(_fmtCtx, nullptr);
+			_fmtCtx = std::shared_ptr<AVFormatContext>(pfc, [](AVFormatContext *pc) { avformat_close_input(&pc); });
+			er = avformat_find_stream_info(_fmtCtx.get(), nullptr);
 			av_dict_free(&op);
 			for (int i = 0; i < (int)_fmtCtx->nb_streams; i++) {
 				er = opencodec(_fmtCtx->streams[i]);
@@ -170,7 +181,7 @@ json::value FFmpegHelper::info() {
 		return {};
 	}
 
-	auto pkts = readAllPacket(_fmtCtx);
+	auto fctx = readFileContext(_fmtCtx);
 	json::value j;
 	for (int i = 0; i < static_cast<int>(_fmtCtx->nb_streams); i++) {
 		AVStream *pstream = _fmtCtx->streams[i];
