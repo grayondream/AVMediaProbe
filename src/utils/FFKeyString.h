@@ -34,3 +34,8 @@ static std::string str_format(const std::string &format, Args ... args) {
 	std::snprintf(buf.get(), size_buf, format.c_str(), args ...);
 	return std::string(buf.get(), buf.get() + size_buf - 1);
 }
+
+
+#if TEST
+void testFormt2String();
+#endif//TEST

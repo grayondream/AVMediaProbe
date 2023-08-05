@@ -71,6 +71,16 @@ json::value pkts2json(std::vector<AVPacket*>& pkts) {
 	return frames;
 }
 
+void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
+	std::vector<std::string> vec = to_string(fmt);
+	if (!vec[0].empty()) { j[kVideoFmtFmt] = vec[0]; }
+	if (!vec[1].empty()) { j[kVideoFmtLine] = vec[1]; }
+	if (!vec[3].empty()) { j[kVideoFmtBit] = vec[3]; }
+	if (!vec[2].empty()) { j[kVideoFmtLayout] = vec[2]; }
+	if (!vec[5].empty()) { j[kVideoFmtEnd] = vec[5]; }
+	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
+}
+
 void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
 	AVCodecParameters *pp = ps->codecpar;
 	streamJson[kVideoWidth] = pp->width;
@@ -81,6 +91,7 @@ void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const
 	streamJson[kVideoColorTrc] = to_string(pp->color_trc);
 	streamJson[kStreamFramesNumber] = pkts.size();
 	streamJson[kStreamFrames] = pkts2json(pkts);
+	parseVideoFormat(streamJson, static_cast<AVPixelFormat>(pp->format));
 }
 
 void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
@@ -90,6 +101,7 @@ void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const
 	streamJson[kAudioChannelLayout] = (int)pp->channel_layout;
 	streamJson[kStreamFramesNumber] = pkts.size();
 	streamJson[kStreamFrames] = pkts2json(pkts);
+	
 }
 
 std::vector<std::vector<AVPacket*>> readAllPacket(const AVFormatContext *fmt) {

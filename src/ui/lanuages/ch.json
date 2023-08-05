@@ -24,10 +24,17 @@
     "f width" : "视频宽度",
     "f height" : "视频高度",
 
-    "hacolor range" : "色彩范围",
-    "h color primaries" : "色彩原色",
-    "h color space" : "颜色空间",
-    "h color trc" : "传输特性",
+    "ka pixfmt" : "色彩空间",
+    "kb linesize": "分片采样",
+    "kc bit" : "位深",
+    "kd fmt layout" : "分片分布",
+    "ke end" : "位格式",
+    "kf bit format" : "采样格式",
+
+    "qacolor range" : "色彩范围",
+    "q color primaries" : "色彩原色",
+    "q color space" : "颜色空间",
+    "q color trc" : "传输特性",
 
     "h sample rate" : "采样率",
     "i channel" : "通道数",
