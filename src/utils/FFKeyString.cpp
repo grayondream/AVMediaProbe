@@ -176,7 +176,7 @@ std::vector<std::string> to_string(const AVPixelFormat r) {
             return {"YUV", "4:2:0", "Planner", "8", ""};
 		case AV_PIX_FMT_YUYV422:   ///< packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr
             return {"YUYV", "4:2:2", "Packed", "8", ""};
-		case AV_PIX_FMT_RGB:     ///< packed RGB 8:8:8, 24bpp, RGBRGB...
+		case AV_PIX_FMT_RGB24:     ///< packed RGB 8:8:8, 24bpp, RGBRGB...
             return {"RGB", "8:8:8", "Packed", "8", ""};
 		case AV_PIX_FMT_BGR24:     ///< packed RGB 8:8:8, 24bpp, BGRBGR...
             return {"BGR", "8:8:8", "Packed", "8", ""};
@@ -284,289 +284,290 @@ std::vector<std::string> to_string(const AVPixelFormat r) {
             return {"BGR", "4:4:4", "Packed", "", ""};
 		case AV_PIX_FMT_BGR444BE:  ///< packed BGR 4:4:4, 16bpp, (msb)4X 4B 4G 4R(lsb), big-endian,    X=unused/undefined
             return {"BGR", "4:4:4", "Packed", "", ""};
-            
 		case AV_PIX_FMT_YA8:       ///< 8 bits gray, 8 bits alpha
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YA", "", "Packed", "8", ""};
 		case AV_PIX_FMT_BGR48BE:   ///< packed RGB 16:16:16, 48bpp, 16B, 16G, 16R, the 2-byte value for each R/G/B component is stored as big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"R", "16:16:16", "Packed", "16", ""};
 		case AV_PIX_FMT_BGR48LE:   ///< packed RGB 16:16:16, 48bpp, 16B, 16G, 16R, the 2-byte value for each R/G/B component is stored as little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BGR", "16:16:16", "Packed", "", ""};
 		case AV_PIX_FMT_YUV420P9BE: ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "9", ""};
 		case AV_PIX_FMT_YUV420P9LE: ///< planar YUV 4:2:0, 13.5bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "9", ""};
 		case AV_PIX_FMT_YUV420P10BE:///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV420P10LE:///< planar YUV 4:2:0, 15bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV422P10BE:///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV422P10LE:///< planar YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV444P9BE: ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_YUV444P9LE: ///< planar YUV 4:4:4, 27bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_YUV444P10BE:///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV444P10LE:///< planar YUV 4:4:4, 30bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV422P9BE: ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "9", ""};
 		case AV_PIX_FMT_YUV422P9LE: ///< planar YUV 4:2:2, 18bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "9", ""};
 		case AV_PIX_FMT_GBRP:      ///< planar GBR 4:4:4 24bpp
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "8", ""};
 		case AV_PIX_FMT_GBRP9BE:   ///< planar GBR 4:4:4 27bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_GBRP9LE:   ///< planar GBR 4:4:4 27bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_GBRP10BE:  ///< planar GBR 4:4:4 30bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_GBRP10LE:  ///< planar GBR 4:4:4 30bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_GBRP16BE:  ///< planar GBR 4:4:4 48bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "16", ""};
 		case AV_PIX_FMT_GBRP16LE:  ///< planar GBR 4:4:4 48bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "16", ""};
 		case AV_PIX_FMT_YUVA422P:  ///< planar YUV 4:2:2 24bpp, (1 Cr & Cb sample per 2x1 Y & A samples)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "", ""};
 		case AV_PIX_FMT_YUVA444P:  ///< planar YUV 4:4:4 32bpp, (1 Cr & Cb sample per 1x1 Y & A samples)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "", ""};
 		case AV_PIX_FMT_YUVA420P9BE:  ///< planar YUV 4:2:0 22.5bpp, (1 Cr & Cb sample per 2x2 Y & A samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA420P9LE:  ///< planar YUV 4:2:0 22.5bpp, (1 Cr & Cb sample per 2x2 Y & A samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA422P9BE:  ///< planar YUV 4:2:2 27bpp, (1 Cr & Cb sample per 2x1 Y & A samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA422P9LE:  ///< planar YUV 4:2:2 27bpp, (1 Cr & Cb sample per 2x1 Y & A samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA444P9BE:  ///< planar YUV 4:4:4 36bpp, (1 Cr & Cb sample per 1x1 Y & A samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA444P9LE:  ///< planar YUV 4:4:4 36bpp, (1 Cr & Cb sample per 1x1 Y & A samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "9", ""};
 		case AV_PIX_FMT_YUVA420P10BE: ///< planar YUV 4:2:0 25bpp, (1 Cr & Cb sample per 2x2 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA420P10LE: ///< planar YUV 4:2:0 25bpp, (1 Cr & Cb sample per 2x2 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA422P10BE: ///< planar YUV 4:2:2 30bpp, (1 Cr & Cb sample per 2x1 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA422P10LE: ///< planar YUV 4:2:2 30bpp, (1 Cr & Cb sample per 2x1 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA444P10BE: ///< planar YUV 4:4:4 40bpp, (1 Cr & Cb sample per 1x1 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA444P10LE: ///< planar YUV 4:4:4 40bpp, (1 Cr & Cb sample per 1x1 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_YUVA420P16BE: ///< planar YUV 4:2:0 40bpp, (1 Cr & Cb sample per 2x2 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "16", ""};
 		case AV_PIX_FMT_YUVA420P16LE: ///< planar YUV 4:2:0 40bpp, (1 Cr & Cb sample per 2x2 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:0", "Planner", "16", ""};
+
 		case AV_PIX_FMT_YUVA422P16BE: ///< planar YUV 4:2:2 48bpp, (1 Cr & Cb sample per 2x1 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "16", ""};
 		case AV_PIX_FMT_YUVA422P16LE: ///< planar YUV 4:2:2 48bpp, (1 Cr & Cb sample per 2x1 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "16", ""};
 		case AV_PIX_FMT_YUVA444P16BE: ///< planar YUV 4:4:4 64bpp, (1 Cr & Cb sample per 1x1 Y & A samples, big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "16", ""};
 		case AV_PIX_FMT_YUVA444P16LE: ///< planar YUV 4:4:4 64bpp, (1 Cr & Cb sample per 1x1 Y & A samples, little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "16", ""};
 		case AV_PIX_FMT_VDPAU:     ///< HW acceleration through VDPAU, Picture.data[3] contains a VdpVideoSurface
-            return {"YUV", "::", "Planner", "", ""};
+            return {"VDPAU", "", "Planner", "", ""};
 		case AV_PIX_FMT_XYZ12LE:      ///< packed XYZ 4:4:4, 36 bpp, (msb) 12X, 12Y, 12Z (lsb), the 2-byte value for each X/Y/Z is stored as little-endian, the 4 lower bits are set to 0
-            return {"YUV", "::", "Planner", "", ""};
+            return {"XYZ", "4:4:4", "Packed", "12", ""};
 		case AV_PIX_FMT_XYZ12BE:      ///< packed XYZ 4:4:4, 36 bpp, (msb) 12X, 12Y, 12Z (lsb), the 2-byte value for each X/Y/Z is stored as big-endian, the 4 lower bits are set to 0
-            return {"YUV", "::", "Planner", "", ""};
+            return {"XYZ", "4:4:4", "Packed", "12", ""};
 		case AV_PIX_FMT_NV16:         ///< interleaved chroma YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"NV16", "4:2:2", "Packed", "", ""};
 		case AV_PIX_FMT_NV20LE:       ///< interleaved chroma YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"NV20", "4:2:2", "Packed", "", ""};
 		case AV_PIX_FMT_NV20BE:       ///< interleaved chroma YUV 4:2:2, 20bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"NV20", "4:2:2", "Packed", "", ""};
 		case AV_PIX_FMT_RGBA64BE:     ///< packed RGBA 16:16:16:16, 64bpp, 16R, 16G, 16B, 16A, the 2-byte value for each R/G/B/A component is stored as big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"RBGA", "16:16:16:16", "Packed", "16", ""};
 		case AV_PIX_FMT_RGBA64LE:     ///< packed RGBA 16:16:16:16, 64bpp, 16R, 16G, 16B, 16A, the 2-byte value for each R/G/B/A component is stored as little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"RGBA", "16:16:16:16", "Packed", "16", ""};
 		case AV_PIX_FMT_BGRA64BE:     ///< packed RGBA 16:16:16:16, 64bpp, 16B, 16G, 16R, 16A, the 2-byte value for each R/G/B/A component is stored as big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BGRA", "16:16:16:16", "Packed", "16", ""};
 		case AV_PIX_FMT_BGRA64LE:     ///< packed RGBA 16:16:16:16, 64bpp, 16B, 16G, 16R, 16A, the 2-byte value for each R/G/B/A component is stored as little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BGRA", "16:16:16:16", "Packed", "16", ""};
 		case AV_PIX_FMT_YVYU422:   ///< packed YUV 4:2:2, 16bpp, Y0 Cr Y1 Cb
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YVYU", "4:2:2", "Packed", "", ""};
 		case AV_PIX_FMT_YA16BE:       ///< 16 bits gray, 16 bits alpha (big-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YA", "", "Packed", "16", ""};
 		case AV_PIX_FMT_YA16LE:       ///< 16 bits gray, 16 bits alpha (little-endian)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YA", "", "Packed", "16", ""};
 		case AV_PIX_FMT_GBRAP:        ///< planar GBRA 4:4:4:4 32bpp
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "8", ""};
 		case AV_PIX_FMT_GBRAP16BE:    ///< planar GBRA 4:4:4:4 64bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "16", ""};
 		case AV_PIX_FMT_GBRAP16LE:    ///< planar GBRA 4:4:4:4 64bpp, little-endian
-			return {"YUV", "::", "Planner", ""};
+			return {"GBRA", "4:4:4:4", "Planner", ""};
 		case AV_PIX_FMT_QSV:
-			return { "YUV", "::", "Planner" , ""};
+			return { "QSV", "", "" , ""};
 		case AV_PIX_FMT_MMAL:
-            return {"YUV", "::", "Planner", "", ""};
+            return {"MMAL", "", "", "", ""};
 		case AV_PIX_FMT_D3D11VA_VLD:  ///< HW decoding through Direct3D11 via old API, Picture.data[3] contains a ID3D11VideoDecoderOutputView pointer
-			return { "YUV", "::", "Planner" , ""};
+			return { "D3D11VA VLD", "", "" , ""};
 		case AV_PIX_FMT_CUDA:
-            return {"YUV", "::", "Planner", "", ""};
+            return {"CUDA", "", "", "", ""};
 		case AV_PIX_FMT_0RGB:        ///< packed RGB 8:8:8, 32bpp, XRGBXRGB...   X=unused/undefined
-            return {"YUV", "::", "Planner", "", ""};
+            return {"0RGB", "8:8:8", "Packed", "8", ""};
 		case AV_PIX_FMT_RGB0:        ///< packed RGB 8:8:8, 32bpp, RGBXRGBX...   X=unused/undefined
-            return {"YUV", "::", "Planner", "", ""};
+            return {"RGB0", "8:8:8", "Packed", "8", ""};
 		case AV_PIX_FMT_0BGR:        ///< packed BGR 8:8:8, 32bpp, XBGRXBGR...   X=unused/undefined
-            return {"YUV", "::", "Planner", "", ""};
+            return {"0BGR", "8:8:8", "Packed", "8", ""};
 		case AV_PIX_FMT_BGR0:        ///< packed BGR 8:8:8, 32bpp, BGRXBGRX...   X=unused/undefined
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BGR0", "8:8:8", "Packed", "8", ""};
 		case AV_PIX_FMT_YUV420P12BE: ///< planar YUV 4:2:0,18bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV420P12LE: ///< planar YUV 4:2:0,18bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV420P14BE: ///< planar YUV 4:2:0,21bpp, (1 Cr & Cb sample per 2x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "14", ""};
 		case AV_PIX_FMT_YUV420P14LE: ///< planar YUV 4:2:0,21bpp, (1 Cr & Cb sample per 2x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:0", "Planner", "14", ""};
 		case AV_PIX_FMT_YUV422P12BE: ///< planar YUV 4:2:2,24bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV422P12LE: ///< planar YUV 4:2:2,24bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV422P14BE: ///< planar YUV 4:2:2,28bpp, (1 Cr & Cb sample per 2x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "14", ""};
 		case AV_PIX_FMT_YUV422P14LE: ///< planar YUV 4:2:2,28bpp, (1 Cr & Cb sample per 2x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:2:2", "Planner", "14", ""};
 		case AV_PIX_FMT_YUV444P12BE: ///< planar YUV 4:4:4,36bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV444P12LE: ///< planar YUV 4:4:4,36bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV444P14BE: ///< planar YUV 4:4:4,42bpp, (1 Cr & Cb sample per 1x1 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "14", ""};
 		case AV_PIX_FMT_YUV444P14LE: ///< planar YUV 4:4:4,42bpp, (1 Cr & Cb sample per 1x1 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:4", "Planner", "14", ""};
 		case AV_PIX_FMT_GBRP12BE:    ///< planar GBR 4:4:4 36bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_GBRP12LE:    ///< planar GBR 4:4:4 36bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_GBRP14BE:    ///< planar GBR 4:4:4 42bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "14", ""};
 		case AV_PIX_FMT_GBRP14LE:    ///< planar GBR 4:4:4 42bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "Planner", "14", ""};
 		case AV_PIX_FMT_YUVJ411P:    ///< planar YUV 4:1:1, 12bpp, (1 Cr & Cb sample per 4x1 Y samples) full scale (JPEG), deprecated in favor of AV_PIX_FMT_YUV411P and setting color_range
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:1:1", "Planner", "", ""};
 		case AV_PIX_FMT_BAYER_BGGR8:    ///< bayer, BGBG..(odd line), GRGR..(even line), 8-bit samples
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GBBR", "", "", "8", ""};
 		case AV_PIX_FMT_BAYER_RGGB8:    ///< bayer, RGRG..(odd line), GBGB..(even line), 8-bit samples
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER RGGB", "", "", "8", ""};
 		case AV_PIX_FMT_BAYER_GBRG8:    ///< bayer, GBGB..(odd line), RGRG..(even line), 8-bit samples
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GBRG", "", "", "8", ""};
 		case AV_PIX_FMT_BAYER_GRBG8:    ///< bayer, GRGR..(odd line), BGBG..(even line), 8-bit samples
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GRBG", "", "", "8", ""};
 		case AV_PIX_FMT_BAYER_BGGR16LE: ///< bayer, BGBG..(odd line), GRGR..(even line), 16-bit samples, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER BGGR", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_BGGR16BE: ///< bayer, BGBG..(odd line), GRGR..(even line), 16-bit samples, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER BGGR", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_RGGB16LE: ///< bayer, RGRG..(odd line), GBGB..(even line), 16-bit samples, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER RGGB", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_RGGB16BE: ///< bayer, RGRG..(odd line), GBGB..(even line), 16-bit samples, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER RGGB", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_GBRG16LE: ///< bayer, GBGB..(odd line), RGRG..(even line), 16-bit samples, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GBRG", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_GBRG16BE: ///< bayer, GBGB..(odd line), RGRG..(even line), 16-bit samples, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GBRG", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_GRBG16LE: ///< bayer, GRGR..(odd line), BGBG..(even line), 16-bit samples, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GRBG", "", "", "16", ""};
 		case AV_PIX_FMT_BAYER_GRBG16BE: ///< bayer, GRGR..(odd line), BGBG..(even line), 16-bit samples, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"BAYER GRBG", "", "", "16", ""};
 		case AV_PIX_FMT_XVMC:///< XVideo Motion Acceleration via common packet passing
-            return {"YUV", "::", "Planner", "", ""};
+            return {"XVMC", "", "", "", ""};
 		case AV_PIX_FMT_YUV440P10LE: ///< planar YUV 4:4:0,20bpp, (1 Cr & Cb sample per 1x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV440P10BE: ///< planar YUV 4:4:0,20bpp, (1 Cr & Cb sample per 1x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:0", "Planner", "10", ""};
 		case AV_PIX_FMT_YUV440P12LE: ///< planar YUV 4:4:0,24bpp, (1 Cr & Cb sample per 1x2 Y samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:0", "Planner", "12", ""};
 		case AV_PIX_FMT_YUV440P12BE: ///< planar YUV 4:4:0,24bpp, (1 Cr & Cb sample per 1x2 Y samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUV", "4:4:0", "Planner", "12", ""};
 		case AV_PIX_FMT_AYUV64LE:    ///< packed AYUV 4:4:4,64bpp (1 Cr & Cb sample per 1x1 Y & A samples), little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"AYUV", "4:4:4", "Packed", "16", ""};
 		case AV_PIX_FMT_AYUV64BE:    ///< packed AYUV 4:4:4,64bpp (1 Cr & Cb sample per 1x1 Y & A samples), big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"AYUV", "4:4:4", "Packed", "16", ""};
 		case AV_PIX_FMT_VIDEOTOOLBOX: ///< hardware decoding through Videotoolbox
-            return {"YUV", "::", "Planner", "", ""};
+            return {"VideoToolBox", "", "", "", ""};
 		case AV_PIX_FMT_P010LE: ///< like NV12, with 10bpp per component, data in the high bits, zeros in the low bits, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"P0", "", "", "10", ""};
 		case AV_PIX_FMT_P010BE: ///< like NV12, with 10bpp per component, data in the high bits, zeros in the low bits, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"P0", "", "", "10", ""};
 		case AV_PIX_FMT_GBRAP12BE:  ///< planar GBR 4:4:4:4 48bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_GBRAP12LE:  ///< planar GBR 4:4:4:4 48bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_GBRAP10BE:  ///< planar GBR 4:4:4:4 40bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_GBRAP10LE:  ///< planar GBR 4:4:4:4 40bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "Planner", "10", ""};
 		case AV_PIX_FMT_MEDIACODEC: ///< hardware decoding through MediaCodec
-            return {"YUV", "::", "Planner", "", ""};
+            return {"MediaCodec", "", "", "", ""};
 		case AV_PIX_FMT_GRAY12BE:   ///<        Y        , 12bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "12", ""};
 		case AV_PIX_FMT_GRAY12LE:   ///<        Y        , 12bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "12", ""};
 		case AV_PIX_FMT_GRAY10BE:   ///<        Y        , 10bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "10", ""};
 		case AV_PIX_FMT_GRAY10LE:   ///<        Y        , 10bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "10", ""};
 		case AV_PIX_FMT_P016LE: ///< like NV12, with 16bpp per component, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"P0", "", "", "16", ""};
 		case AV_PIX_FMT_P016BE: ///< like NV12, with 16bpp per component, big-endian
-			return { "YUV", "::", "Planner" , ""};
+			return { "P0", "", "16" , ""};
 		case AV_PIX_FMT_D3D11:
-            return {"YUV", "::", "Planner", "", ""};
+            return {"D3D11", "", "", "", ""};
 		case AV_PIX_FMT_GRAY9BE:   ///<        Y        , 9bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "9", ""};
 		case AV_PIX_FMT_GRAY9LE:   ///<        Y        , 9bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "9", ""};
+
 		case AV_PIX_FMT_GBRPF32BE:  ///< IEEE-754 single precision planar GBR 4:4:4,     96bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "", "32", ""};
 		case AV_PIX_FMT_GBRPF32LE:  ///< IEEE-754 single precision planar GBR 4:4:4,     96bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBR", "4:4:4", "", "32", ""};
 		case AV_PIX_FMT_GBRAPF32BE: ///< IEEE-754 single precision planar GBRA 4:4:4:4, 128bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"GBRA", "4:4:4:4", "", "32", ""};
 		case AV_PIX_FMT_GBRAPF32LE: ///< IEEE-754 single precision planar GBRA 4:4:4:4, 128bpp, little-endian
-			return { "YUV, """, "::", "Planner" , ""};
+			return { "GBRA","4:4:4:4", "", "32" , ""};
 		case AV_PIX_FMT_DRM_PRIME:
-			return { ", ""Y;UV", "::", "Planner" , ""};
+			return { "DRM PRIME", "", "", "" , ""};
 		case AV_PIX_FMT_OPENCL:
-            return {"YUV", "::", "Planner", "", ""};
+            return {"OpenCL", "", "", "", ""};
 		case AV_PIX_FMT_GRAY14BE:   ///<        Y        , 14bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "14", ""};
 		case AV_PIX_FMT_GRAY14LE:   ///<        Y        , 14bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "14", ""};
 		case AV_PIX_FMT_GRAYF32BE:  ///< IEEE-754 single precision Y, 32bpp, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "32", ""};
 		case AV_PIX_FMT_GRAYF32LE:  ///< IEEE-754 single precision Y, 32bpp, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Gray", "", "", "32", ""};
 		case AV_PIX_FMT_YUVA422P12BE: ///< planar YUV 4:2:2,24bpp, (1 Cr & Cb sample per 2x1 Y samples), 12b alpha, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "12", ""};
 		case AV_PIX_FMT_YUVA422P12LE: ///< planar YUV 4:2:2,24bpp, (1 Cr & Cb sample per 2x1 Y samples), 12b alpha, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:2:2", "Planner", "12", ""};
 		case AV_PIX_FMT_YUVA444P12BE: ///< planar YUV 4:4:4,36bpp, (1 Cr & Cb sample per 1x1 Y samples), 12b alpha, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_YUVA444P12LE: ///< planar YUV 4:4:4,36bpp, (1 Cr & Cb sample per 1x1 Y samples), 12b alpha, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"YUVA", "4:4:4", "Planner", "12", ""};
 		case AV_PIX_FMT_NV24:      ///< planar YUV 4:4:4, 24bpp, 1 plane for Y and 1 plane for the UV components, which are interleaved (first byte U and the following byte V)
-            return {"YUV", "::", "Planner", "", ""};
+            return {"NV24", "4:4:4", "Planner", "", ""};
 		case AV_PIX_FMT_NV42:      ///< as above, but U and V bytes are swapped
-			return { ", ""Y;UV", "::", "Planner" , ""};
+			return { "NV42", "4:4:4", "Planner" , "", ""};
 		case AV_PIX_FMT_VULKAN:
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Vulkan", "", "", "", ""};
 		case AV_PIX_FMT_Y210BE:    ///< packed YUV 4:2:2 like YUYV422, 20bpp, data in the high bits, big-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Y210", "4:2:2", "Packed", "", ""};
 		case AV_PIX_FMT_Y210LE:    ///< packed YUV 4:2:2 like YUYV422, 20bpp, data in the high bits, little-endian
-            return {"YUV", "::", "Planner", "", ""};
+            return {"Y210", "4:2:2", "Packed", "", ""};
 		//case AV_PIX_FMT_X2RGB10LE: ///< packed RGB 10:10:10, 30bpp, (msb)2X 10R 10G 10B(lsb), little-endian, X=unused/undefined
         //    return {"YUV", "::", "Planner", ""};
 		//case AV_PIX_FMT_X2RGB10BE: ///< packed RGB 10:10:10, 30bpp, (msb)2X 10R 10G 10B(lsb), big-endian, X=unused/undefined
         //    return {"YUV", "::", "Planner", ""};
 		case AV_PIX_FMT_NB:        ///< number of pixel formats, DO NOT USE THIS if you want to link with shared libav* because the number of formats might differ between versions
-            return {"YUV", "::", "Planner", ""}
+			return { "", "::", "", "" };
     }
 	return {};
 }
