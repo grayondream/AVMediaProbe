@@ -5,7 +5,7 @@
 #include "FFmpegSerialKey.h"
 
 std::string to_string(const AVRational a, bool b) {
-	return b ? "(" + std::to_string(a.num) + "," + std::to_string(a.den) + ")" : std::to_string(a.num) + "/" + std::to_string(a.den);
+	return b ? "(" + std::to_string(a.num) + "/" + std::to_string(a.den) + ")" : std::to_string(a.num) + "/" + std::to_string(a.den);
 }
 
 std::string to_string(const AVColorPrimaries r) {
@@ -586,13 +586,13 @@ void testFormt2String(){
 std::string streamType2String(const int type) {
 	switch (type) {
 	case AVMEDIA_TYPE_AUDIO:
-		return "audio";
+		return kAudio;
 	case AVMEDIA_TYPE_SUBTITLE:
-		return "subtitle";
+		return kSubtitle;
 	case AVMEDIA_TYPE_VIDEO:
-		return "video";
+		return kVideo;
 	default:
-		return "unknown";
+		return kUnkonw;
 	}
 }
 

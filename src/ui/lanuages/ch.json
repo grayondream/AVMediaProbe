@@ -49,8 +49,15 @@
     "minute" : "分钟",
     "hour" : "小时",
     "day" : "天",
-    "hz" : "赫兹",
+    "khz" : "kHZ",
     "a frame" : "帧",
     "vfr" : "动态帧率(VFR)",
-    "cfr" : "固定帧率(CFR)"
+    "cfr" : "固定帧率(CFR)",
+    "cbr" : "固定码率(CBR)",
+    "vbr" : "动态码率(VBR)",
+
+    "video" : "视频",
+    "audio" : "音频",
+    "subtitle" : "字幕",
+    "unknown" : "未知"
 }

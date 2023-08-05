@@ -25,18 +25,33 @@ json::value parseMedia(const AVFormatContext *fmt) {
 	};
 }
 
+void parseFps(json::value &j, const AVStream *ps) {
+	if (!ps) return;
+	if (ps->avg_frame_rate.den <= 0) return;
+	j[kVideoAVGFps] = std::to_string(av_q2d(ps->avg_frame_rate)) + to_string(ps->avg_frame_rate, true) + "FPS";
+	bool isvfr = false;
+	if (ps->r_frame_rate.den > 0) {
+		isvfr = av_cmp_q(ps->r_frame_rate, ps->avg_frame_rate) != 0;
+		j[kVideoMAXFps] = std::to_string(av_q2d(ps->r_frame_rate)) + to_string(ps->r_frame_rate, true) + "FPS";
+	}
+	
+	j[kVideoIsVFR] = isvfr ? TRANS_FETCH(kVFR) : TRANS_FETCH(kCFR);
+}
+
 void parseCommonStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *pstream) {
 	AVCodecParameters *pp = pstream->codecpar;
 	auto duration = pstream->duration == AV_NOPTS_VALUE ? fmt->duration : pstream->duration;
 	auto timbase = pstream->duration == AV_NOPTS_VALUE ? AVRational{ 1, AV_TIME_BASE }: pstream->time_base;
 	streamJson = json::object{
 		{ kStreamIndex, pstream->index},
-		{ kStreamType, streamType2String(pstream->codecpar->codec_type).c_str()},
+		{ kStreamType, TRANS_FETCH(streamType2String(pstream->codecpar->codec_type))},
 		{ kStreamDuration, time2string(duration, timbase)},
 		{ kStreamStartTime, time2string(pstream->start_time, pstream->time_base)},
 		{ kStreamBitRate, size2String(pstream->codecpar->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
 		{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 	};
+
+	parseFps(streamJson, pstream);
 }
 
 int findNumberBit(int n) {
@@ -81,14 +96,6 @@ void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
 	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
 }
 
-void parseVideoFps(json::value &j, const AVStream *ps) {
-	if (!ps) return;
-	j[kVideoAVGFps] = std::to_string(av_q2d(ps->avg_frame_rate)) + to_string(ps->avg_frame_rate, true) + "FPS";
-	j[kVideoMAXFps] = std::to_string(av_q2d(ps->r_frame_rate)) + to_string(ps->r_frame_rate, true) + "FPS";
-	bool isvfr = av_cmp_q(ps->r_frame_rate, ps->avg_frame_rate) != 0;
-	j[kVideoIsVFR] = isvfr ? TRANS_FETCH(kVFR) : TRANS_FETCH(kCFR);
-}
-
 void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
 	AVCodecParameters *pp = ps->codecpar;
 	streamJson[kVideoWidth] = pp->width;
@@ -100,7 +107,6 @@ void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const
 	streamJson[kStreamFramesNumber] = pkts.size();
 	streamJson[kStreamFrames] = pkts2json(pkts);
 	parseVideoFormat(streamJson, static_cast<AVPixelFormat>(pp->format));
-	parseVideoFps(streamJson, ps);
 }
 
 void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {

@@ -72,7 +72,11 @@ CONSTEXPR_EXPR(kSeconds, second);
 CONSTEXPR_EXPR(kMinute, minute);
 CONSTEXPR_EXPR(kHour, hour);
 CONSTEXPR_EXPR(kDay, day);
-CONSTEXPR_EXPR(kHz, hz);
+CONSTEXPR_EXPR(kHz, khz);
 CONSTEXPR_EXPR(kVFR, vfr);
 CONSTEXPR_EXPR(kCFR, cfr);
+CONSTEXPR_EXPR(kVideo, video);
+CONSTEXPR_EXPR(kAudio, audio);
+CONSTEXPR_EXPR(kSubtitle, subtitle);
+CONSTEXPR_EXPR(kUnkonw, unkown);
 
