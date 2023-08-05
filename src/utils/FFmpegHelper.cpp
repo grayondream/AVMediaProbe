@@ -81,6 +81,14 @@ void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
 	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
 }
 
+void parseVideoFps(json::value &j, const AVStream *ps) {
+	if (!ps) return;
+	j[kVideoAVGFps] = std::to_string(av_q2d(ps->avg_frame_rate)) + to_string(ps->avg_frame_rate, true) + "FPS";
+	j[kVideoMAXFps] = std::to_string(av_q2d(ps->r_frame_rate)) + to_string(ps->r_frame_rate, true) + "FPS";
+	bool isvfr = av_cmp_q(ps->r_frame_rate, ps->avg_frame_rate) != 0;
+	j[kVideoIsVFR] = isvfr ? TRANS_FETCH(kVFR) : TRANS_FETCH(kCFR);
+}
+
 void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
 	AVCodecParameters *pp = ps->codecpar;
 	streamJson[kVideoWidth] = pp->width;
@@ -92,6 +100,7 @@ void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const
 	streamJson[kStreamFramesNumber] = pkts.size();
 	streamJson[kStreamFrames] = pkts2json(pkts);
 	parseVideoFormat(streamJson, static_cast<AVPixelFormat>(pp->format));
+	parseVideoFps(streamJson, ps);
 }
 
 void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {

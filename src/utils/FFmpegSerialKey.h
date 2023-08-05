@@ -47,6 +47,10 @@ CONSTEXPR_EXPR(kStreamFrame, a frame);
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
 
+CONSTEXPR_EXPR(kVideoIsVFR, fa isvfr);
+CONSTEXPR_EXPR(kVideoAVGFps, fe avgfps);
+CONSTEXPR_EXPR(kVideoMAXFps, ff maxfps);
+
 CONSTEXPR_EXPR(kVideoFmtFmt, ka pixfmt);
 CONSTEXPR_EXPR(kVideoFmtLine, kb linesize);
 CONSTEXPR_EXPR(kVideoFmtBit, kc bit);
@@ -69,4 +73,6 @@ CONSTEXPR_EXPR(kMinute, minute);
 CONSTEXPR_EXPR(kHour, hour);
 CONSTEXPR_EXPR(kDay, day);
 CONSTEXPR_EXPR(kHz, hz);
+CONSTEXPR_EXPR(kVFR, vfr);
+CONSTEXPR_EXPR(kCFR, cfr);
 

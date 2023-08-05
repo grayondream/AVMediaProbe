@@ -24,6 +24,10 @@
     "f width" : "视频宽度",
     "f height" : "视频高度",
 
+    "fa isvfr" : "帧率模式",
+    "fe avgfps" : "平均帧率",
+    "ff maxfps" : "最大帧率",
+
     "ka pixfmt" : "色彩空间",
     "kb linesize": "分片采样",
     "kc bit" : "位深",
@@ -47,4 +51,6 @@
     "day" : "天",
     "hz" : "赫兹",
     "a frame" : "帧",
+    "vfr" : "动态帧率(VFR)",
+    "cfr" : "固定帧率(CFR)"
 }
