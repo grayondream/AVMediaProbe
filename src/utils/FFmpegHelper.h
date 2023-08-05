@@ -17,7 +17,11 @@ public:
 	~FFmpegHelper();
 	json::value info();
 
+	int opencodec(AVStream *ps);
+	int init(const std::string& file);
+
 public:
     std::string _file;
 	AVFormatContext *_fmtCtx{};
+	std::vector<std::pair<AVCodecContext *, AVCodec *>> _codecs;
 };
