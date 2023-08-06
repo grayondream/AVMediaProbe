@@ -12,7 +12,7 @@ public:
 	static QString workDir() {
 		QString workingDir = QDir::currentPath();
 #if DEBUG
-		workingDir += "/Debug";
+		//workingDir += "/Debug";
 #endif//DEBUG
 		return workingDir;
 	}

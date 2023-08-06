@@ -1,5 +1,5 @@
 [submodule ".\\thirdparty\\spdlog"]
-	path = .\\thirdparty\\spdlog
+	path = thirdparty/spdlog
 	url = https://github.com/gabime/spdlog.git
 [submodule "thirdparty/configor"]
 	path = thirdparty/configor

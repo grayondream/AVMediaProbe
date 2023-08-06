@@ -2,6 +2,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/cfg/env.h>
 #include <spdlog/sinks/basic_file_sink.h>
+#include<spdlog/sinks/stdout_color_sinks.h>
 #include <vector>
 
 using std::vector;
@@ -40,7 +41,7 @@ string Log::_logFile;
 void Log::setFile(const std::string &file) {
 	_logFile = file;
 	constexpr auto level = spdlog::level::level_enum::debug;
-	auto consoleSink = std::make_shared<spdlog::sinks::wincolor_stdout_sink_mt>();
+	auto consoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 	consoleSink->set_level(level);
 
 	auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(file.c_str());
