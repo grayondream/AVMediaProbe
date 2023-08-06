@@ -583,6 +583,33 @@ void testFormt2String(){
 }
 #endif
 
+std::string to_string(const int32_t* m, int row, int col) {
+	std::string ret{ "{" };
+	for (int i = 0; i < row; i++) {
+		ret += "[";
+		for (int j = 0; j < col; j++) {
+			ret += std::to_string(*(m + i * row + j)) + ",";
+		}
+
+		ret += "]";
+		if (i < row - 1) {
+			ret += ",";
+		}
+	}
+	return ret + "}";
+}
+
+double int32todouble(const int32_t i, const int intb, const int doub) {
+	int n = intb;
+	int32_t mask = 0;
+	while (--n) {
+		mask |= 1;
+		mask <<= 1;
+	}
+
+	return (i >> doub) + (i & mask) * 1.0 / (2 << intb);
+}
+
 std::string streamType2String(const int type) {
 	switch (type) {
 	case AVMEDIA_TYPE_AUDIO:

@@ -48,6 +48,10 @@ CONSTEXPR_EXPR(kStreamSize, d f stream size);
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
 CONSTEXPR_EXPR(kVideoTransMatrix, f zamatrix);
+CONSTEXPR_EXPR(kVideoTransMatrixabu, [a b u]);
+CONSTEXPR_EXPR(kVideoTransMatrixcdv, [c d v]);
+CONSTEXPR_EXPR(kVideoTransMatrixxyw, [x y w]);
+
 CONSTEXPR_EXPR(kVideoRatation, f zarotate);
 CONSTEXPR_EXPR(kVideoFlipX, f zflipx);
 CONSTEXPR_EXPR(kVideoFlipY, f zflipy);

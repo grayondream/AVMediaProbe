@@ -13,6 +13,9 @@ std::string to_string(const AVColorTransferCharacteristic r);
 std::string to_string(const AVColorSpace r);
 std::string to_string(const AVColorRange r);
 std::string to_string(const AVChromaLocation r);
+std::string to_string(const int32_t* m, int row, int col);
+
+double int32todouble(const int32_t i, const int intb, const int doub);
 std::vector<std::string> to_string(const AVPixelFormat r);
 
 std::string to_string(const AVRational a, bool b = false);

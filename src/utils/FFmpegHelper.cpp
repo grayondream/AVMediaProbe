@@ -119,6 +119,31 @@ void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
 	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
 }
 
+static json::value parseTransMatrix(const int32_t* m) {
+	json::value j{};
+	std::string ps[] = { kVideoTransMatrixabu, kVideoTransMatrixcdv, kVideoTransMatrixxyw };
+	for (int i = 0; i < 3; i++) {
+		std::string ret{};
+		ret += "[";
+		for (int j = 0; j < 3; j++) {
+			ret += "  ";
+			if (j == 2) {
+				//2.30
+				ret += std::to_string(int32todouble(*(m + i * 3 + j), 2, 30));
+			}
+			else {
+				//16.16
+				ret += std::to_string(int32todouble(*(m + i * 3 + j), 16, 16)) + ",";
+			}
+
+			LOGI("the value is {}", *(m + i * 3 + j));
+		}
+
+		j[ps[i]] = ret + "]";
+	}
+	return j;
+}
+
 void parseVideoTransformer(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto st = pc->_streams[index]._pstream;
 	uint8_t* displaymatrix = av_stream_get_side_data(st.get(), AV_PKT_DATA_DISPLAYMATRIX, NULL);
@@ -127,6 +152,9 @@ void parseVideoTransformer(json::value &j, const std::shared_ptr<FileContext> pc
 		theta = -av_display_rotation_get((int32_t*)displaymatrix);
 
 	j[kVideoRatation] = int(theta);
+	if (displaymatrix) {
+		j[kVideoTransMatrix] = parseTransMatrix(reinterpret_cast<int32_t*>(displaymatrix));
+	}
 }
 
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
