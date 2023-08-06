@@ -23,6 +23,8 @@ std::string time2string(const int64_t t, const AVRational timebase);
 
 std::string size2String(const int64_t sz);
 
+std::string double2percent(const int64_t a, const int64_t b, const bool bc = true);
+
 template<typename ... Args>
 static std::string str_format(const std::string &format, Args ... args) {
 	auto size_buf = std::snprintf(nullptr, 0, format.c_str(), args ...) + 1;

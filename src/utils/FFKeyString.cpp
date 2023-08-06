@@ -596,6 +596,15 @@ std::string streamType2String(const int type) {
 	}
 }
 
+std::string double2percent(const int64_t a, const int64_t b, const bool bc) {
+	if (b == 0) return {};
+	if (bc) {
+		return "(" + std::to_string(a * 1.0 / b * 100) + "%)";
+	}else {
+		return std::to_string(a * 1.0 / b * 100) + "%";
+	}
+}
+
 std::string time2string(const int64_t t, const AVRational timebase) {
 	LOGI("time is {} time base is {}, {}", t, timebase.den, timebase.num);
 	std::string ret{};

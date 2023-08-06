@@ -68,6 +68,7 @@ void parseCommonStream(json::value &j, const std::shared_ptr<FileContext> pc, in
 		{ kStreamDuration, time2string(duration, timbase)},
 		{ kStreamStartTime, time2string(pstream->start_time, pstream->time_base)},
 		{ kStreamBitRate, size2String(pstream->codecpar->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
+		{ kStreamSize, size2String(pc->_streams[index]._totalSize) + double2percent(pc->_streams[index]._totalSize, pc->_filesize)},
 		{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 	};
 
@@ -206,6 +207,7 @@ json::value FFmpegHelper::info() {
 	}
 
 	json::value j;
+	j[TRANS_FETCH(kMedia)] = parseMedia(_filectx);
 	for (int i = 0; i < static_cast<int>(_filectx->_streams.size()); i++) {
 		json::value jj{};
 		parseCommonStream(jj, _filectx, i);
@@ -219,6 +221,5 @@ json::value FFmpegHelper::info() {
 		j[(TRANS_FETCH(kStream) + " " + std::to_string(i)).c_str()] = jj;
 	}
 
-	j[TRANS_FETCH(kMedia)] = parseMedia(_filectx);
 	return j;
 }

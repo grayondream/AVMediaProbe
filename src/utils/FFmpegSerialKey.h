@@ -43,6 +43,7 @@ CONSTEXPR_EXPR(kStreamStartTime, e stream start time);
 CONSTEXPR_EXPR(kStreamFrames, z frames);
 CONSTEXPR_EXPR(kStreamFramesNumber, z frame number);
 CONSTEXPR_EXPR(kStreamFrame, a frame);
+CONSTEXPR_EXPR(kStreamSize, d f stream size);
 
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
