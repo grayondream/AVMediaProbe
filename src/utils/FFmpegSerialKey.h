@@ -92,4 +92,6 @@ CONSTEXPR_EXPR(kAudio, audio);
 CONSTEXPR_EXPR(kSubtitle, subtitle);
 CONSTEXPR_EXPR(kPixel, pixel);
 CONSTEXPR_EXPR(kUnkonw, unkown);
+CONSTEXPR_EXPR(kYes, yes);
+CONSTEXPR_EXPR(kNo, no);
 

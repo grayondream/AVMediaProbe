@@ -146,15 +146,21 @@ static json::value parseTransMatrix(const int32_t* m) {
 
 void parseVideoTransformer(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto st = pc->_streams[index]._pstream;
-	uint8_t* displaymatrix = av_stream_get_side_data(st.get(), AV_PKT_DATA_DISPLAYMATRIX, NULL);
+	uint8_t* pd = (uint8_t*)av_stream_get_side_data(st.get(), AV_PKT_DATA_DISPLAYMATRIX, NULL);
 	double theta = 0;
-	if (displaymatrix)
-		theta = -av_display_rotation_get((int32_t*)displaymatrix);
+	if (pd) {
+		int32_t* displaymatrix = (int32_t*)pd;
+		j[kVideoTransMatrix] = parseTransMatrix(displaymatrix);
+		j[kVideoFlipX] = displaymatrix[0] < 0 ? TRANS_FETCH(kYes) : TRANS_FETCH(kNo);
+		j[kVideoFlipY] = displaymatrix[5] < 0 ? TRANS_FETCH(kYes) : TRANS_FETCH(kNo);
+		for (int i = 0; i < 9; i++) {
+			displaymatrix[i] = std::abs(displaymatrix[i]);
+		}
+		theta = -av_display_rotation_get(displaymatrix);
+	}
 
 	j[kVideoRatation] = int(theta);
-	if (displaymatrix) {
-		j[kVideoTransMatrix] = parseTransMatrix(reinterpret_cast<int32_t*>(displaymatrix));
-	}
+	
 }
 
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
