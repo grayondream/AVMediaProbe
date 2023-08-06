@@ -47,6 +47,13 @@ CONSTEXPR_EXPR(kStreamSize, d f stream size);
 
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
+CONSTEXPR_EXPR(kVideoTransMatrix, f zamatrix);
+CONSTEXPR_EXPR(kVideoRatation, f zarotate);
+CONSTEXPR_EXPR(kVideoFlipX, f zflipx);
+CONSTEXPR_EXPR(kVideoFlipY, f zflipy);
+CONSTEXPR_EXPR(kVideoSar, f zsar);
+CONSTEXPR_EXPR(kVideoDar, f zdar);
+CONSTEXPR_EXPR(kVideoPar, f zpar);
 
 CONSTEXPR_EXPR(kVideoIsVFR, fa isvfr);
 CONSTEXPR_EXPR(kVideoAVGFps, fe avgfps);
@@ -79,5 +86,6 @@ CONSTEXPR_EXPR(kCFR, cfr);
 CONSTEXPR_EXPR(kVideo, video);
 CONSTEXPR_EXPR(kAudio, audio);
 CONSTEXPR_EXPR(kSubtitle, subtitle);
+CONSTEXPR_EXPR(kPixel, pixel);
 CONSTEXPR_EXPR(kUnkonw, unkown);
 

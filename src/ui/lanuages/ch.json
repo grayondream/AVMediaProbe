@@ -24,6 +24,13 @@
 
     "f width" : "视频宽度",
     "f height" : "视频高度",
+    "f zamatrix" : "变换矩阵",
+    "f zarotate" : "旋转角度",
+    "f zflipx" : "X方向翻转",
+    "f zflipy" : "Y方向翻转",
+    "f zsar" : "",
+    "f zdar" : "",
+    "f zpar" : "",
 
     "fa isvfr" : "帧率模式",
     "fe avgfps" : "平均帧率",
@@ -56,9 +63,11 @@
     "cfr" : "固定帧率(CFR)",
     "cbr" : "固定码率(CBR)",
     "vbr" : "动态码率(VBR)",
-
+    "pixel" : "像素",
     "video" : "视频",
     "audio" : "音频",
     "subtitle" : "字幕",
+    "yes" : "是",
+    "no" : "否",
     "unknown" : "未知"
 }

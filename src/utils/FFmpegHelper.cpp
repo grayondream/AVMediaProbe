@@ -7,6 +7,8 @@
 #pragma warning(push, 0)
 extern "C" {
 #   include <libavformat/avformat.h>
+#	include <libavutil/avutil.h>
+#	include <libavutil/display.h>
 }
 #pragma warning(pop)
 
@@ -117,12 +119,22 @@ void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
 	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
 }
 
+void parseVideoTransformer(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
+	auto st = pc->_streams[index]._pstream;
+	uint8_t* displaymatrix = av_stream_get_side_data(st.get(), AV_PKT_DATA_DISPLAYMATRIX, NULL);
+	double theta = 0;
+	if (displaymatrix)
+		theta = -av_display_rotation_get((int32_t*)displaymatrix);
+
+	j[kVideoRatation] = int(theta);
+}
+
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto ps = pc->_streams[index]._pstream;
 	auto& pkts = pc->_streams[index]._pkts;
 	AVCodecParameters *pp = ps->codecpar;
-	j[kVideoWidth] = pp->width;
-	j[kVideoHeight] = pp->height;
+	j[kVideoWidth] = std::to_string(pp->width) + TRANS_FETCH(kPixel);
+	j[kVideoHeight] = std::to_string(pp->height) + TRANS_FETCH(kPixel);
 	j[kVideoColorPri] = to_string(pp->color_primaries);
 	j[kVideoColorRange] = to_string(pp->color_range);
 	j[kVideoColorSpace] = to_string(pp->color_space);
@@ -130,6 +142,7 @@ void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int
 	j[kStreamFramesNumber] = pkts.size();
 	j[kStreamFrames] = pkts2json(pkts);
 	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
+	parseVideoTransformer(j, pc, index);
 }
 
 void parseAudioStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
@@ -170,7 +183,7 @@ int opencodec(const std::shared_ptr<FileContext> fc) {
 		fc->_streams[ps->index]._pcodec = std::shared_ptr<AVCodec>(const_cast<AVCodec*>(pc), [](AVCodec *pc) {});
 		err = avcodec_open2(pcc, pc, nullptr);
 	}
-	return err;
+	return 0;
 }
 
 int FFmpegHelper::init(const std::string& file) {
