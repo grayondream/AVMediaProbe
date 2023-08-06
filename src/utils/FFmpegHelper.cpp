@@ -4,6 +4,11 @@
 #include <filesystem>
 #include "Log.h"
 #include "FFKeyString.h"
+#pragma warning(push, 0)
+extern "C" {
+#   include <libavformat/avformat.h>
+}
+#pragma warning(pop)
 
 struct StreamContext {
 	std::vector<std::shared_ptr<AVPacket>> _pkts{};
@@ -16,13 +21,16 @@ struct StreamContext {
 struct FileContext{
 	std::shared_ptr<AVFormatContext> _fmtCtx{};
 	std::vector<StreamContext> _streams{};
+	int64_t _filesize{};
 };
 
 FFmpegHelper::~FFmpegHelper() {
-	_fmtCtx = nullptr;
+	_filectx = nullptr;
 }
 
-json::value parseMedia(const AVFormatContext *fmt) {
+json::value parseMedia(const std::shared_ptr<FileContext> pc) {
+	auto fmt = pc->_fmtCtx;
+	pc->_filesize = std::filesystem::file_size(fmt->url);
 	return json::object{
 		{ kFileName, fmt->url},
 		{ kDuration, time2string(fmt->duration, AVRational{ 1, AV_TIME_BASE })},
@@ -31,11 +39,11 @@ json::value parseMedia(const AVFormatContext *fmt) {
 		{ kMediaFormat, fmt->iformat->long_name},
 		{ kBitRate, size2String(fmt->bit_rate) + "/" + TRANS_FETCH(kSeconds)},
 		{ kFormatScore, fmt->probe_score},
-		{ kFilSize, size2String(std::filesystem::file_size(fmt->url)) }
+		{ kFilSize, size2String(pc->_filesize) }
 	};
 }
 
-void parseFps(json::value &j, const AVStream *ps) {
+void parseFps(json::value &j, const std::shared_ptr<AVStream> ps) {
 	if (!ps) return;
 	if (ps->avg_frame_rate.den <= 0) return;
 	j[kVideoAVGFps] = std::to_string(av_q2d(ps->avg_frame_rate)) + to_string(ps->avg_frame_rate, true) + "FPS";
@@ -48,11 +56,13 @@ void parseFps(json::value &j, const AVStream *ps) {
 	j[kVideoIsVFR] = isvfr ? TRANS_FETCH(kVFR) : TRANS_FETCH(kCFR);
 }
 
-void parseCommonStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *pstream) {
+void parseCommonStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
+	auto pstream = pc->_streams[index]._pstream;
+	auto pfmt = pc->_fmtCtx;
 	AVCodecParameters *pp = pstream->codecpar;
-	auto duration = pstream->duration == AV_NOPTS_VALUE ? fmt->duration : pstream->duration;
+	auto duration = pstream->duration == AV_NOPTS_VALUE ? pfmt->duration : pstream->duration;
 	auto timbase = pstream->duration == AV_NOPTS_VALUE ? AVRational{ 1, AV_TIME_BASE }: pstream->time_base;
-	streamJson = json::object{
+	j = json::object{
 		{ kStreamIndex, pstream->index},
 		{ kStreamType, TRANS_FETCH(streamType2String(pstream->codecpar->codec_type))},
 		{ kStreamDuration, time2string(duration, timbase)},
@@ -61,7 +71,7 @@ void parseCommonStream(json::value &streamJson, const AVFormatContext *fmt, cons
 		{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 	};
 
-	parseFps(streamJson, pstream);
+	parseFps(j, pstream);
 }
 
 int findNumberBit(int n) {
@@ -74,7 +84,7 @@ int findNumberBit(int n) {
 	return i + 1;
 }
 
-json::value pkts2json(std::vector<AVPacket*>& pkts) {
+json::value pkts2json(std::vector<std::shared_ptr<AVPacket>>& pkts) {
 	json::value frames{};
 
 	int i = 0;
@@ -106,33 +116,37 @@ void parseVideoFormat(json::value &j, const AVPixelFormat fmt) {
 	if (!vec[6].empty()) { j[kVideoFmtBitFormat] = vec[6]; }
 }
 
-void parseVideoStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
+void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
+	auto ps = pc->_streams[index]._pstream;
+	auto& pkts = pc->_streams[index]._pkts;
 	AVCodecParameters *pp = ps->codecpar;
-	streamJson[kVideoWidth] = pp->width;
-	streamJson[kVideoHeight] = pp->height;
-	streamJson[kVideoColorPri] = to_string(pp->color_primaries);
-	streamJson[kVideoColorRange] = to_string(pp->color_range);
-	streamJson[kVideoColorSpace] = to_string(pp->color_space);
-	streamJson[kVideoColorTrc] = to_string(pp->color_trc);
-	streamJson[kStreamFramesNumber] = pkts.size();
-	streamJson[kStreamFrames] = pkts2json(pkts);
-	parseVideoFormat(streamJson, static_cast<AVPixelFormat>(pp->format));
+	j[kVideoWidth] = pp->width;
+	j[kVideoHeight] = pp->height;
+	j[kVideoColorPri] = to_string(pp->color_primaries);
+	j[kVideoColorRange] = to_string(pp->color_range);
+	j[kVideoColorSpace] = to_string(pp->color_space);
+	j[kVideoColorTrc] = to_string(pp->color_trc);
+	j[kStreamFramesNumber] = pkts.size();
+	j[kStreamFrames] = pkts2json(pkts);
+	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
 }
 
-void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const AVStream *ps, std::vector<AVPacket*> pkts) {
+void parseAudioStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
+	auto ps = pc->_streams[index]._pstream;
 	AVCodecParameters *pp = ps->codecpar;
-	streamJson[kAudioSampltRate] = std::to_string(pp->sample_rate * 1.0 / 1000) + TRANS_FETCH(kHz);
-	streamJson[kAudioChannel] = (int)pp->channels;
-	streamJson[kAudioChannelLayout] = (int)pp->channel_layout;
-	streamJson[kStreamFramesNumber] = pkts.size();
-	streamJson[kStreamFrames] = pkts2json(pkts);
+	auto& pkts = pc->_streams[index]._pkts;
+	j[kAudioSampltRate] = std::to_string(pp->sample_rate * 1.0 / 1000) + TRANS_FETCH(kHz);
+	j[kAudioChannel] = (int)pp->channels;
+	j[kAudioChannelLayout] = (int)pp->channel_layout;
+	j[kStreamFramesNumber] = pkts.size();
+	j[kStreamFrames] = pkts2json(pkts);
 
 }
 
- std::shared_ptr<FileContext> readFileContext(const std::shared_ptr< AVFormatContext> fmt) {
-	if (!fmt || !fmt->nb_streams) return nullptr;
-	
-	std::vector<StreamContext> sc(fmt->nb_streams);
+void readAllPkacet(const std::shared_ptr<FileContext> fc) {
+	 auto fmt = fc->_fmtCtx;
+	if (!fmt || !fmt->nb_streams) return;
+	auto& sc = fc->_streams;
 	while (true) {
 		AVPacket* pkt = av_packet_alloc();
 		if (av_read_frame(fmt.get(), pkt) < 0) break;
@@ -140,36 +154,46 @@ void parseAudioStream(json::value &streamJson, const AVFormatContext *fmt, const
 		sc[pkt->stream_index]._totalSize += pkt->size;
 	}
 	
-	auto ctx = std::make_shared<FileContext>();
-	ctx->_streams = sc;
-	return ctx;
 }
 
-int FFmpegHelper::opencodec(AVStream *ps) {
-	const AVCodec*pc = avcodec_find_decoder(ps->codecpar->codec_id);
-	AVCodecContext *pcc = avcodec_alloc_context3(pc);
-	_codecs.emplace_back(std::make_pair(std::shared_ptr<AVCodecContext>(pcc, [](AVCodecContext *pc) {
-		avcodec_free_context(&pc);
-		pc = nullptr;
-	}), std::shared_ptr<AVCodec>(const_cast<AVCodec*>(pc), [](AVCodec *pc) {})));
-	return avcodec_open2(pcc, pc, nullptr);
+int opencodec(const std::shared_ptr<FileContext> fc) {
+	int err{};
+	for (int i = 0; i < (int)fc->_fmtCtx->nb_streams; i++) {
+		auto ps = fc->_streams[i]._pstream;
+		const AVCodec*pc = avcodec_find_decoder(ps->codecpar->codec_id);
+		AVCodecContext *pcc = avcodec_alloc_context3(pc);
+		fc->_streams[ps->index]._pcodecctx = std::shared_ptr<AVCodecContext>(pcc, [](AVCodecContext *pc) {
+			avcodec_free_context(&pc);
+			pc = nullptr;
+		});
+		fc->_streams[ps->index]._pcodec = std::shared_ptr<AVCodec>(const_cast<AVCodec*>(pc), [](AVCodec *pc) {});
+		err = avcodec_open2(pcc, pc, nullptr);
+	}
+	return err;
 }
 
 int FFmpegHelper::init(const std::string& file) {
 	int er = 0;
-	if (!_fmtCtx) {
+	if (!_filectx) {
+		_filectx = std::make_shared<FileContext>();
 		do {
 			AVDictionary *op = nullptr;
 			av_dict_set_int(&op, "probesize", INT64_MAX, 0);
 			AVFormatContext *pfc{};
 			er = avformat_open_input(&pfc, _file.data(), nullptr, &op);
 			if (er < 0) break;
-			_fmtCtx = std::shared_ptr<AVFormatContext>(pfc, [](AVFormatContext *pc) { avformat_close_input(&pc); });
-			er = avformat_find_stream_info(_fmtCtx.get(), nullptr);
+			_filectx->_fmtCtx = std::shared_ptr<AVFormatContext>(pfc, [](AVFormatContext *pc) { avformat_close_input(&pc); });
+			er = avformat_find_stream_info(pfc, nullptr);
 			av_dict_free(&op);
-			for (int i = 0; i < (int)_fmtCtx->nb_streams; i++) {
-				er = opencodec(_fmtCtx->streams[i]);
+			for (int i = 0; i < (int)pfc->nb_streams; i++) {
+				StreamContext st{};
+				st._pstream = std::shared_ptr<AVStream>(pfc->streams[i], [](const AVStream *ps) {});
+				_filectx->_streams.emplace_back(st);
 			}
+
+			er = opencodec(_filectx);
+			if (er < 0) break;
+			readAllPkacet(_filectx);
 		} while (false);
 	}
 
@@ -177,26 +201,24 @@ int FFmpegHelper::init(const std::string& file) {
 }
 
 json::value FFmpegHelper::info() {
-	if (!_fmtCtx && init(_file) < 0) {
+	if (!_filectx && init(_file) < 0) {
 		return {};
 	}
 
-	auto fctx = readFileContext(_fmtCtx);
 	json::value j;
-	for (int i = 0; i < static_cast<int>(_fmtCtx->nb_streams); i++) {
-		AVStream *pstream = _fmtCtx->streams[i];
-		json::value streamJson{};
-		parseCommonStream(streamJson, _fmtCtx, pstream);
+	for (int i = 0; i < static_cast<int>(_filectx->_streams.size()); i++) {
+		json::value jj{};
+		parseCommonStream(jj, _filectx, i);
+		auto pstream = _filectx->_streams[i]._pstream;
 		if (pstream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-			parseVideoStream(streamJson, _fmtCtx, pstream, pkts[AVMEDIA_TYPE_VIDEO]);
+			parseVideoStream(jj, _filectx, i);
 		}else if(pstream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-			parseAudioStream(streamJson, _fmtCtx, pstream, pkts[AVMEDIA_TYPE_AUDIO]);
+			parseAudioStream(jj, _filectx, i);
 		}
 
-		j[(TRANS_FETCH(kStream) + " " + std::to_string(i)).c_str()] = streamJson;
+		j[(TRANS_FETCH(kStream) + " " + std::to_string(i)).c_str()] = jj;
 	}
 
-	j[TRANS_FETCH(kMedia)] = parseMedia(_fmtCtx);
-	releaseAllPacket(pkts);
+	j[TRANS_FETCH(kMedia)] = parseMedia(_filectx);
 	return j;
 }
