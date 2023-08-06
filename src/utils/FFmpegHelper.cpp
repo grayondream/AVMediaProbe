@@ -4,6 +4,8 @@
 #include <filesystem>
 #include "Log.h"
 #include "FFKeyString.h"
+#include "fmath.h"
+
 #pragma warning(push, 0)
 extern "C" {
 #   include <libavformat/avformat.h>
@@ -163,6 +165,23 @@ void parseVideoTransformer(json::value &j, const std::shared_ptr<FileContext> pc
 	
 }
 
+static bool isinvalid(const AVRational r) {
+	return r.den == 0 || r.num == 0;
+}
+
+void parseVideoAspectRatio(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
+	auto ps = pc->_streams[index]._pstream;
+	auto& pkts = pc->_streams[index]._pkts;
+	AVCodecParameters *pp = ps->codecpar;
+	AVRational sar = isinvalid(pp->sample_aspect_ratio) ? AVRational{ 1,1 } : pp->sample_aspect_ratio;
+	auto gcdint = gcd<int>(pp->width, pp->height);
+	AVRational par = AVRational{ pp->width / gcdint, pp->height / gcdint };
+	AVRational dar = av_mul_q(par, sar);
+	j[kVideoPar] = to_string(par, false, ':');
+	j[kVideoSar] = to_string(sar, false, ':');
+	j[kVideoDar] = to_string(dar, false, ':');
+}
+
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto ps = pc->_streams[index]._pstream;
 	auto& pkts = pc->_streams[index]._pkts;
@@ -177,6 +196,7 @@ void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int
 	j[kStreamFrames] = pkts2json(pkts);
 	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
 	parseVideoTransformer(j, pc, index);
+	parseVideoAspectRatio(j, pc, index);
 }
 
 void parseAudioStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {

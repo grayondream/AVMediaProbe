@@ -4,8 +4,8 @@
 #include "Log.h"
 #include "FFmpegSerialKey.h"
 
-std::string to_string(const AVRational a, bool b) {
-	return b ? "(" + std::to_string(a.num) + "/" + std::to_string(a.den) + ")" : std::to_string(a.num) + "/" + std::to_string(a.den);
+std::string to_string(const AVRational a, const bool b, const char sp) {
+	return b ? "(" + std::to_string(a.num) + sp + std::to_string(a.den) + ")" : std::to_string(a.num) + sp + std::to_string(a.den);
 }
 
 std::string to_string(const AVColorPrimaries r) {

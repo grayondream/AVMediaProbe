@@ -28,9 +28,9 @@
     "f zarotate" : "旋转角度",
     "f zflipx" : "X方向翻转",
     "f zflipy" : "Y方向翻转",
-    "f zsar" : "",
-    "f zdar" : "",
-    "f zpar" : "",
+    "f zsar" : "采样宽高比",
+    "f zdar" : "显示宽高比",
+    "f zpar" : "像素宽高比",
 
     "fa isvfr" : "帧率模式",
     "fe avgfps" : "平均帧率",

@@ -18,7 +18,7 @@ std::string to_string(const int32_t* m, int row, int col);
 double int32todouble(const int32_t i, const int intb, const int doub);
 std::vector<std::string> to_string(const AVPixelFormat r);
 
-std::string to_string(const AVRational a, bool b = false);
+std::string to_string(const AVRational a, const bool b = false, const char sp = '/');
 
 std::string streamType2String(const int type);
 
