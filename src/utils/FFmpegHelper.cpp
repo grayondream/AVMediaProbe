@@ -191,6 +191,7 @@ void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int
 	j[kVideoColorTrc] = to_string(pp->color_trc);
 	j[kStreamFramesNumber] = pkts.size();
 	j[kStreamFrames] = pkts2json(pkts);
+	j[kVideoDataDensity] = pp->bit_rate / (pp->width * pp->height * av_q2d(ps->avg_frame_rate));
 	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
 	parseVideoTransformer(j, pc, index);
 	parseVideoAspectRatio(j, pc, index);

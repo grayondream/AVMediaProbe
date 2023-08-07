@@ -45,6 +45,7 @@ CONSTEXPR_EXPR(kStreamFramesNumber, z frame number);
 CONSTEXPR_EXPR(kStreamFrame, a frame);
 CONSTEXPR_EXPR(kStreamSize, d f stream size);
 
+CONSTEXPR_EXPR(kVideoDataDensity, d datadensity);
 CONSTEXPR_EXPR(kVideoWidth, f width);
 CONSTEXPR_EXPR(kVideoHeight, f height);
 CONSTEXPR_EXPR(kVideoTransMatrix, f zamatrix);

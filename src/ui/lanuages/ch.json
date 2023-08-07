@@ -16,6 +16,7 @@
     "c codec" : "编码格式",
     "c fps" : "帧率",
     "d bitrate" : "码率",
+    "d datadensity" : "流密度",
     "d f stream size" : "流大小",
     "d stream duration" : "流时长",
     "e stream start time" : "流开始时间",
