@@ -197,13 +197,18 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *e){
 	return QMainWindow::eventFilter(obj, e);
 }
 
-void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
+void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j, const int count) {
+	int kcount = count;
+	int k = 0;
 	for (auto && i = j.begin(); i != j.end(); i++) {
+		if (i.key() == kStreamFrames) {
+			kcount = 10;
+		}
 		LOGI("key is {}", i.key().c_str());
 		auto item = new QTreeWidgetItem({ TRANS_FETCH(i.key()).c_str() });
 		if (j[i.key()].is_object()) {
 			if (i.key() != kStreamFrames || _showFramesAction->isChecked()) {
-				parseUIFromJson(item, j[i.key()]);
+				parseUIFromJson(item, j[i.key()], kcount);
 			}
 		}else {
 			auto v = j[i.key()];
@@ -217,6 +222,8 @@ void MainWindow::parseUIFromJson(QTreeWidgetItem *win, const json::value &j) {
 		if (i.key() != kStreamFrames || _showFramesAction->isChecked()) {
 			win->addChild(item);
 		}
+
+		if (++k > count) break;
 	}
 }
 
@@ -228,7 +235,7 @@ QTreeWidget* MainWindow::paresTreeWidgetFromJson(const QString &filename, const 
 	for (auto && i = j.begin(); i != j.end(); i++) {
 		auto item = new QTreeWidgetItem({ i.key().c_str() });
 		if (j[i.key()].is_object()) {
-			parseUIFromJson(item, j[i.key()]);
+			parseUIFromJson(item, j[i.key()], INT_MAX);
 		}
 		treeWin->addTopLevelItem(item);
 	}

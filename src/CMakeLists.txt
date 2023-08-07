@@ -76,7 +76,12 @@ foreach(var ${FFMPEG_DYLIB_FILES})
     file(COPY ${var} DESTINATION ${BINARY_DIR})
 endforeach()
 
-add_executable(${CMAKE_PROJECT_NAME} ${MAIN_EXE_FILES})
+if(WIN32)
+    add_executable(${CMAKE_PROJECT_NAME} WIN32 ${MAIN_EXE_FILES})
+elseif(APPLE)
+    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${MAIN_EXE_FILES})
+endif()
+
 target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Core Qt5::Gui Qt5::Widgets)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${FFMPEG_LIB_FILES})
 
