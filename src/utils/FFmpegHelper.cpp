@@ -199,6 +199,22 @@ void parseVideoAspectRatio(json::value &j, const std::shared_ptr<FileContext> pc
 	j[kVideoDar] = to_string(dar, false, ':');
 }
 
+std::unordered_map<std::string, std::string> parseMetaDataIntoMap(const std::shared_ptr<FileContext> &pc) {
+	std::unordered_map<std::string, std::string> ret{};
+	AVDictionaryEntry *tag = NULL;
+	while ((tag = av_dict_get(pc->_fmtCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+		ret[tag->key] = tag->value;
+	}
+
+	return ret;
+}
+
+void parseMetaData(json::value &j, const std::shared_ptr<FileContext> pc) {
+	auto m = parseMetaDataIntoMap(pc);
+	j[kMetaDataCreateTime] = m[kMetaDataCreateTime];
+	printf("");
+}
+
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto ps = pc->_streams[index]._pstream;
 	auto& pkts = pc->_streams[index]._pkts;
@@ -215,6 +231,9 @@ void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int
 	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
 	parseVideoTransformer(j, pc, index);
 	parseVideoAspectRatio(j, pc, index);
+	parseMetaData(j, pc);
+
+	
 }
 
 void parseAudioStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
