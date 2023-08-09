@@ -32,10 +32,36 @@ FFmpegHelper::~FFmpegHelper() {
 	_filectx = nullptr;
 }
 
+json::value string2json(const std::string &str) {
+	try {
+		return json::parse(str);
+	}
+	catch (std::exception &) {
+		return str;
+	}
+}
+
+void parseMetaData(json::value &jj, const std::shared_ptr<FileContext> pc) {
+	json::value j;
+	AVDictionaryEntry *tag = NULL;
+	while ((tag = av_dict_get(pc->_fmtCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+		LOGI("{} : {}");
+		std::string str(tag->value);
+		if (str.find("{") != std::string::npos && str.find("}") != std::string::npos) {
+			j[TRANS_FETCH(tag->key)] = string2json(tag->value);
+		} else {
+			j[TRANS_FETCH(tag->key)] = tag->value;
+		}
+		
+	}
+
+	jj[kMetaData] = j;
+}
+
 json::value parseMedia(const std::shared_ptr<FileContext> pc) {
 	auto fmt = pc->_fmtCtx;
 	pc->_filesize = std::filesystem::file_size(fmt->url);
-	return json::object{
+	json::value j = json::object{
 		{ kFileName, fmt->url},
 		{ kDuration, time2string(fmt->duration, AVRational{ 1, AV_TIME_BASE })},
 		{ kStartTime, time2string(fmt->start_time, AVRational{ 1, AV_TIME_BASE })},
@@ -45,6 +71,10 @@ json::value parseMedia(const std::shared_ptr<FileContext> pc) {
 		{ kFormatScore, fmt->probe_score},
 		{ kFilSize, size2String(pc->_filesize) }
 	};
+
+	parseMetaData(j, pc);
+
+	return j;
 }
 
 void parseFps(json::value &j, const std::shared_ptr<AVStream> ps) {
@@ -199,22 +229,6 @@ void parseVideoAspectRatio(json::value &j, const std::shared_ptr<FileContext> pc
 	j[kVideoDar] = to_string(dar, false, ':');
 }
 
-std::unordered_map<std::string, std::string> parseMetaDataIntoMap(const std::shared_ptr<FileContext> &pc) {
-	std::unordered_map<std::string, std::string> ret{};
-	AVDictionaryEntry *tag = NULL;
-	while ((tag = av_dict_get(pc->_fmtCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
-		ret[tag->key] = tag->value;
-	}
-
-	return ret;
-}
-
-void parseMetaData(json::value &j, const std::shared_ptr<FileContext> pc) {
-	auto m = parseMetaDataIntoMap(pc);
-	j[kMetaDataCreateTime] = m[kMetaDataCreateTime];
-	printf("");
-}
-
 void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {
 	auto ps = pc->_streams[index]._pstream;
 	auto& pkts = pc->_streams[index]._pkts;
@@ -231,9 +245,6 @@ void parseVideoStream(json::value &j, const std::shared_ptr<FileContext> pc, int
 	parseVideoFormat(j, static_cast<AVPixelFormat>(pp->format));
 	parseVideoTransformer(j, pc, index);
 	parseVideoAspectRatio(j, pc, index);
-	parseMetaData(j, pc);
-
-	
 }
 
 void parseAudioStream(json::value &j, const std::shared_ptr<FileContext> pc, int index) {

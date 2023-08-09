@@ -11,6 +11,9 @@
     "f media bitrate" : "媒体码率",
     "g media start time" : "媒体开始时间",
     
+    "z mediadata" : "元数据",
+    "creation_time" : "创建时间",
+
     "a index" : "媒体流索引",
     "b type" : "媒体类型",
     "c codec" : "编码格式",
