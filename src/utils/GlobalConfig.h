@@ -2,6 +2,7 @@
 #include <string>
 #include <QDir>
 #include "LanauageTranslater.h"
+#include <qapplication.h>
 
 constexpr const char *langPath = "lang";
 constexpr const char *langFile = "ch.json";
@@ -9,12 +10,11 @@ constexpr const char *langFile = "ch.json";
 class ViewController;
 class GlobalConfig{
 public:
+	static QString userDir() {
+		return QApplication::applicationDirPath();
+	}
 	static QString workDir() {
-		QString workingDir = QDir::currentPath();
-#if DEBUG
-		workingDir += "/Debug";
-#endif//DEBUG
-		return workingDir;
+		return QApplication::applicationDirPath();
 	}
 	static QString logPath() {
 		return workDir() + "/log";
