@@ -41,10 +41,11 @@ json::value string2json(const std::string &str) {
 	}
 }
 
-void parseMetaData(json::value &jj, const std::shared_ptr<FileContext> pc) {
+json::value parseMetaData(const AVDictionary *metadata) {
+	if (!metadata) return {};
 	json::value j;
 	AVDictionaryEntry *tag = NULL;
-	while ((tag = av_dict_get(pc->_fmtCtx->metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
+	while ((tag = av_dict_get(metadata, "", tag, AV_DICT_IGNORE_SUFFIX))) {
 		LOGI("{} : {}");
 		std::string str(tag->value);
 		if (str.find("{") != std::string::npos && str.find("}") != std::string::npos) {
@@ -55,7 +56,7 @@ void parseMetaData(json::value &jj, const std::shared_ptr<FileContext> pc) {
 		
 	}
 
-	jj[kMetaData] = j;
+	return j;
 }
 
 json::value parseMedia(const std::shared_ptr<FileContext> pc) {
@@ -72,8 +73,10 @@ json::value parseMedia(const std::shared_ptr<FileContext> pc) {
 		{ kFilSize, size2String(pc->_filesize) }
 	};
 
-	parseMetaData(j, pc);
-
+	if (pc->_fmtCtx->metadata) {
+		j[kMetaData] = parseMetaData(pc->_fmtCtx->metadata);
+	}
+	
 	return j;
 }
 
@@ -106,6 +109,10 @@ void parseCommonStream(json::value &j, const std::shared_ptr<FileContext> pc, in
 		{ kStreamCodec, avcodec_get_name(pstream->codecpar->codec_id) },
 	};
 
+	if (pc->_streams[index]._pstream->metadata) {
+		j[kMetaData] = parseMetaData(pc->_streams[index]._pstream->metadata);
+	}
+	
 	parseFps(j, pstream);
 }
 
@@ -174,7 +181,7 @@ static json::value parseTransMatrix(const int32_t* m) {
 }
 
 int getsign(const int32_t v) {
-	return v / std::abs(v);
+	return v == 0 ? 0 : v / std::abs(v);
 }
 
 void printMatrix(int32_t *p, int row, int col) {
